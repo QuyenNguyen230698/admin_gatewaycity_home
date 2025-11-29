@@ -72,7 +72,7 @@
       </div>
 
       <div class="mt-12 text-center text-sm text-gray-500">
-        © 2025 Gateway City - Vĩnh Long. **All rights reserved.**
+        © 2025 Gateway City - Vĩnh Long. <strong>All rights reserved.</strong>
       </div>
     </div>
   </div>
@@ -87,7 +87,29 @@ const password = ref('')
 const loading = ref(false)
 const error = ref('')
 
-// Hàm kiểm tra phiên đăng nhập còn hạn không
+// Danh sách tài khoản nội bộ - DỄ DÀNG THÊM MỚI
+const validAccounts = [
+  {
+    username: 'admin',
+    password: 'Admin@123',
+    name: 'Administrator',
+    role: 'admin'
+  },
+  {
+    username: 'manager',
+    password: 'Manager2025!',
+    name: 'Quản lý khu vực',
+    role: 'manager'
+  },
+  {
+    username: 'staff01',
+    password: 'Staff@456',
+    name: 'Nhân viên 01',
+    role: 'staff'
+  }
+]
+
+// Hàm kiểm tra session còn hạn không
 const isLoginSessionValid = () => {
   const session = localStorage.getItem('loginSession')
   if (!session) return false
@@ -100,29 +122,33 @@ const isLoginSessionValid = () => {
   }
 }
 
-// Hàm duy nhất xử lý toàn bộ login + lưu trữ + lỗi
+// Hàm xử lý đăng nhập
 const handleLogin = async () => {
   error.value = ''
   loading.value = true
 
-  // Delay nhẹ cho UX tốt
+  // Delay nhẹ cho cảm giác mượt
   await new Promise(resolve => setTimeout(resolve, 600))
 
-  if (username.value === 'admin' && password.value === 'Admin@123') {
-    // Tạo thời gian hết hạn: 24 giờ từ bây giờ
-    const expiry = new Date().getTime() + 24 * 60 * 60 * 1000 // 24h
+  // Tìm tài khoản khớp
+  const account = validAccounts.find(
+    acc => acc.username === username.value.trim() && acc.password === password.value
+  )
+
+  if (account) {
+    // Tạo session 24h
+    const expiry = new Date().getTime() + 24 * 60 * 60 * 1000
 
     const loginData = {
       user: {
-        username: 'admin',
-        name: 'Administrator',
-        role: 'admin'
+        username: account.username,
+        name: account.name,
+        role: account.role
       },
-      token: 'hardcoded-admin-token-2025',
-      expiry: expiry
+      token: `internal-token-${account.username}-${Date.now()}`,
+      expiry
     }
 
-    // Lưu vào localStorage (tự động hết hạn sau 24h)
     localStorage.setItem('loginSession', JSON.stringify(loginData))
 
     // Chuyển hướng về trang chủ
@@ -133,7 +159,7 @@ const handleLogin = async () => {
   }
 }
 
-// Kiểm tra khi vào trang: nếu còn phiên hợp lệ → vào luôn trang chủ
+// Kiểm tra session khi load trang
 onMounted(() => {
   if (isLoginSessionValid()) {
     navigateTo('/')

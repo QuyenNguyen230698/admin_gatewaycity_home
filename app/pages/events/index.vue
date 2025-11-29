@@ -100,7 +100,7 @@
 </template>
 
 <script setup>
-const informationStore = useInformationStore();
+const eventStore = useEventStore();
   // Toast
 const toastRef = ref(null);
 const toastImageRef = ref(null); // Thêm ref cho ToastImage
@@ -153,8 +153,8 @@ const newsData = ref([
 
 const openEditDrawer = () => {
   console.log('openEditDrawer');
-  informationStore.setInformation('dataNews');
-  informationStore.setIsOpen(true);
+  eventStore.setInformation('dataNews');
+  eventStore.setIsOpen(true);
 };
 
 // Format ngày đẹp

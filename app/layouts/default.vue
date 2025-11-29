@@ -77,7 +77,11 @@
         </ul>
         <!-- Logout -->
         <div class="p-2 border-t border-base-300">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between p-2">
+            <div class="flex flex-col gap-1">
+              <span class="font-bold text-xs is-drawer-close:hidden">{{ user.name }}</span>
+              <span class="text-xs is-drawer-close:hidden">{{ user.role }}</span>
+            </div>
             <button @click="openLogoutModal" class="btn btn-sm px-2 tooltip tooltip-right">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
@@ -119,6 +123,10 @@
 <script setup>
 const route = useRoute()
 const showLogoutModal = ref(false);
+const user = ref({
+  name: '',
+  role: ''
+});
 
 // Tự động đổi tiêu đề theo route
 const pageTitle = computed(() => {
@@ -143,6 +151,19 @@ const logout = () => {
   }
   navigateTo('/login')
 }
+
+onMounted(() => {
+  const session = localStorage.getItem('loginSession')
+  if (session) {
+    const data = JSON.parse(session)
+    user.value.name = data.user.name
+    user.value.role = data.user.role
+  }
+  if (!session) {
+    navigateTo('/login')
+  }
+})
+
 </script>
 
 <style scoped>
