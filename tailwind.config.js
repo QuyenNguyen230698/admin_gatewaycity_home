@@ -46,7 +46,6 @@ module.exports = {
     require('@tailwindcss/typography'),
     require('daisyui'),
     require('tailwindcss-animated'),
-    require('tailwind-scrollbar')({ nocompatible: true })
   ],
   daisyui: {
     themes: ["light"],

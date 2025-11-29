@@ -88,4 +88,10 @@ pinia: {
     autoImport: true,
   },
 
+  runtimeConfig: {
+    public: {
+      apiBase: process.env.BASE_API,
+    },
+  },
+
 });
