@@ -7,14 +7,23 @@
         <NewsDrawerInformation @close="closeInformation" />
     </div>
 
+    <!-- Event -->
+    <div class="drawer drawer-end">
+        <input id="btn-event" type="checkbox" class="drawer-toggle" v-model="eventStore.isOpen"
+            @change="eventStore.setIsOpen($event.target.checked)" />
+        <div class="drawer-content"></div>
+        <EventsDrawerInformation @close="closeEvent" />
+    </div>
+
 </template>
 
 <script setup>
 const informationStore = useInformationStore();
+const eventStore = useEventStore();
 // Computed property để kiểm tra xem có drawer nào đang mở hay không
 const isAnyDrawerOpen = computed(() => {
     return (
-        informationStore.isOpen
+        informationStore.isOpen || eventStore.isOpen
     );
 });
 // Export biến cho component cha
@@ -24,6 +33,9 @@ defineExpose({
 
 const closeInformation = () => {
     informationStore.setIsOpen(false);
+};
+const closeEvent = () => {
+    eventStore.setIsOpen(false);
 };
 onMounted(() => {
 

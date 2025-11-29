@@ -44,16 +44,16 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue';
 
-const informationStore = useInformationStore();
+const eventStore = useEventStore();
 const config = useAppConfig();
 const isSaving = ref(false);
 
 const close = () => {
-  informationStore.closeInformationManually();
+  eventStore.closeEventManually();
 };
 
 const saveInformation = () => {
-  informationStore.closeInformationManually();
+  eventStore.closeEventManually();
 };
 
 </script>
