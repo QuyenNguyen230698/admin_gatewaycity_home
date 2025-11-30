@@ -155,7 +155,7 @@ const newsData = ref([
 
 const openEditDrawer = () => {
   console.log('openEditDrawer');
-  eventStore.setInformation('dataNews');
+  eventStore.setEvent('dataEvents');
   eventStore.setIsOpen(true);
 };
 

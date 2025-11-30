@@ -4,31 +4,22 @@
     <div class="menu p-0 m-0 flex min-h-screen w-3/4 lg:w-2/5 bg-base-200 text-base-content">
       <div class="w-full px-10 mx-auto flex flex-col h-screen bg-1414">
         <!-- Header -->
-        <div class="sticky top-0 z-10 bg-1414 flex justify-between items-center pt-10 pb-5">
-          <h2 class="text-lg md:text-xl lg:text-2xl font-bold flex gap-2 items-center uppercase font-bold-sans">
-            Edit Information
-          </h2>
-          <button @click="close" class="btn btn-ghost btn-circle" aria-label="Close">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="white"
-              class="size-4 md:size-5 lg:size-6"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          </button>
+        <div class="sticky top-0 z-10 bg-1414 flex justify-between items-center py-4">
+            <h2 class="font-bold text-xl uppercase text-blue-500">News Information</h2>
+            <span @click="close" class="btn btn-lg btn-circle btn-ghost">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </span>
         </div>
 
-        <div class="max-w-4xl mx-auto p-4">
-            <div class="space-y-8">
-                <!-- Basic SEO Section -->
-                <div class="bg-white/5 p-4 rounded-lg">
-                    <h3 class="text-lg font-semibold mb-4">Basic SEO Information</h3>
+        <div class="max-w-4xl w-full">
+            <div class="space-y-8 w-full">
+                <!-- Basic News Section -->
+                <div class="bg-white/5 w-full">
+                    <h3 class="text-lg font-semibold mb-4">Basic News Information</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="col-span-2 md:col-span-1">
+                        <div class="col-span-2">
                             <label class="block text-sm font-medium mb-2">
                                 Banner <span class="text-error">*</span>
                             </label>
@@ -37,7 +28,7 @@
                                 class="w-full px-3 py-2 bg-transparent border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
                                 required />
                         </div>
-                        <div class="col-span-2 md:col-span-1">
+                        <div class="col-span-2">
                             <label class="block text-sm font-medium mb-2">
                                 Title <span class="text-error">*</span>
                             </label>
@@ -55,12 +46,12 @@
                                 rows="3"
                                 class="w-full px-3 py-2 bg-transparent border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
                         </div>
-                        <div class="col-span-2 md:col-span-1">
+                        <div class="col-span-2 md:col-span-1 hidden">
                             <label class="block text-sm font-medium mb-2">
                                 Type <span class="text-error">*</span>
                             </label>
                             <select v-model="formNews.type" 
-                                class="w-full px-3 py-2 bg-transparent border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                class="w-full text-xs px-3 py-2 bg-transparent border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
                                 <option value="">Select Type</option>
                                 <option value="NEWS">NEWS</option>
                                 <option value="EVENTS">EVENTS</option>
@@ -69,6 +60,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="sticky bottom-0 z-10 flex gap-2 items-center justify-center py-4">
+            <button @click="close" class="w-1/2 py-1 border border-blue-700 hover:bg-blue-700 hover:text-white duration-300 transition-all rounded">Cancel</button>
+            <button @click="saveInformation" class="w-1/2 py-1 border border-white hover:border-blue-700 hover:bg-white hover:text-black bg-blue-700 text-white duration-300 transition-all rounded">Save</button>
         </div>
       </div>
     </div>
@@ -79,7 +75,6 @@
 import { ref, computed, watch, nextTick } from 'vue';
 
 const informationStore = useInformationStore();
-const config = useAppConfig();
 const isSaving = ref(false);
 
 const formNews = ref({
