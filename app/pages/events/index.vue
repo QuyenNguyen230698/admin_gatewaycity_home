@@ -33,7 +33,7 @@
                 </svg>
               </label>
               <div class="flex flex-col dropdown-content menu z-20 w-24 bg-base-300 p-1 shadow rounded">
-                <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Update</button>
+                <button @click="openUpdateDrawer(item)" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Update</button>
                 <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Draft</button>
                 <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Delete</button>
               </div>
@@ -171,13 +171,11 @@ const formatDate = (dateString) => {
   })
 }
 
-// Xác nhận xóa (có thể mở modal)
-const confirmDelete = (item) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa tin: "${item.title}"?`)) {
-    // Xử lý xóa ở đây (gọi API)
-    alert('Đã xóa: ' + item.title)
-  }
+const openUpdateDrawer = (item) => {
+    eventStore.setEvent(item);
+    eventStore.setIsOpen(true);
 }
+
 </script>
 
 <style scoped>

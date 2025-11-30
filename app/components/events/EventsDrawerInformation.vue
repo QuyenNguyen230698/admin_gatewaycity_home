@@ -77,12 +77,36 @@ import { ref, computed, watch, nextTick } from 'vue';
 const eventStore = useEventStore()
 const isSaving = ref(false);
 
+const receiveEvent = computed(() => eventStore.getEvent);
+
 const formEvents = ref({
   title: '',
   description: '',
   type: 'EVENTS',
   src: '',
 })
+
+watch(receiveEvent, (newValue) => {
+  if (newValue) {
+    formEvents.value = {
+      title: newValue.title || '',
+      description: newValue.description || '',
+      type: newValue.type || 'EVENTS',
+      src: newValue.src || ''
+    };
+  }
+}, { immediate: true });
+
+const clearForm = () => {
+  formEvents.value = {
+    title: '',
+    description: '',
+    type: 'EVENTS',
+    src: ''
+  };
+  // Reset store
+  eventStore.reset();
+};
 
 const generateContentStyles = (values) => {
     const styles = [];
@@ -199,10 +223,12 @@ function convertUnlayerToHtml(json) {
 
 const close = () => {
   eventStore.closeEventManually();
+  clearForm();
 };
 
 const saveInformation = () => {
   eventStore.closeEventManually();
+  clearForm();
 };
 
 </script>

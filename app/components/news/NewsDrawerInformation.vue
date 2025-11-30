@@ -77,12 +77,36 @@ import { ref, computed, watch, nextTick } from 'vue';
 const informationStore = useInformationStore();
 const isSaving = ref(false);
 
+const receiveInformation = computed(() => informationStore.getInformation);
+
 const formNews = ref({
   title: '',
   description: '',
   type: 'NEWS',
   src: '',
 })
+
+watch(receiveInformation, (newValue) => {
+  if (newValue) {
+    formNews.value = {
+      title: newValue.title || '',
+      description: newValue.description || '',
+      type: newValue.type || 'NEWS',
+      src: newValue.src || ''
+    };
+  }
+}, { immediate: true });
+
+const clearForm = () => {
+  formNews.value = {
+    title: '',
+    description: '',
+    type: 'NEWS',
+    src: ''
+  };
+  // Reset store
+  informationStore.reset();
+};
 
 const generateContentStyles = (values) => {
     const styles = [];
@@ -199,10 +223,12 @@ function convertUnlayerToHtml(json) {
 
 const close = () => {
   informationStore.closeInformationManually();
+  clearForm();
 };
 
 const saveInformation = () => {
   informationStore.closeInformationManually();
+  clearForm();
 };
 
 </script>

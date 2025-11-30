@@ -33,7 +33,7 @@
                 </svg>
               </label>
               <div class="flex flex-col dropdown-content menu z-20 w-24 bg-base-300 p-1 shadow rounded">
-                <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Update</button>
+                <button @click="openUpdateDrawer(item)" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Update</button>
                 <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Published</button>
                 <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Draft</button>
                 <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Delete</button>
@@ -131,7 +131,7 @@ const showMessageToast = (type, message, url = "") => {
 
 const newsData = ref([
   {
-    _id: '68abd3e98587e969d74a1bbe',
+    _id: '68abd3e98587e969d74a1ba1',
     slug: "gateway-city-vinh-long-cong-bo-tien-do-moi-hoan-thien-ha-tang-loi-tien-ich-trong-diem",
     src: 'https://res.cloudinary.com/dgkceewlq/image/upload/v1734690255/samples/imagecon-group.jpg',
     type: 'NEWS',
@@ -142,7 +142,7 @@ const newsData = ref([
     description: 'Gateway City Vĩnh Long vừa cập nhật tiến độ xây dựng mới nhất trong tháng này, đánh dấu nhiều hạng mục trọng điểm bước vào giai đoạn hoàn thiện. Hiện tại, tuyến đường nội khu chính đã được trải nhựa, hệ thống điện – nước âm và chiếu sáng công cộng đã lắp đặt gần như hoàn tất. Khu vực quảng trường trung tâm và tuyến phố ven sông đang thi công cảnh quan, dự kiến sẽ ra mắt trong thời gian tới. Bên cạnh đó, khu biệt thự và nhà phố thương mại đang được nhà thầu đẩy nhanh tiến độ để bàn giao đúng kế hoạch. Việc hạ tầng được hoàn thiện đồng bộ giúp dự án đạt tính hiện hữu cao, tạo thêm niềm tin cho khách hàng và thể hiện cam kết mạnh mẽ của chủ đầu tư trong việc xây dựng một quần thể All-In-Compound đầu tiên tại miền Tây.'
   },
   {
-    _id: '68abd3e98587e969d74a1bbe',
+    _id: '68abd3e98587e969d74a1ba2',
     slug: "gateway-city-vinh-long-cong-bo-tien-do-moi-hoan-thien-ha-tang-loi-tien-ich-trong-diem",
     src: 'https://res.cloudinary.com/dgkceewlq/image/upload/v1734690256/samples/cloudinary-group.jpg',
     type: 'NEWS',
@@ -172,13 +172,11 @@ const formatDate = (dateString) => {
   })
 }
 
-// Xác nhận xóa (có thể mở modal)
-const confirmDelete = (item) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa tin: "${item.title}"?`)) {
-    // Xử lý xóa ở đây (gọi API)
-    alert('Đã xóa: ' + item.title)
-  }
+const openUpdateDrawer = (item) => {
+    informationStore.setInformation(item);
+    informationStore.setIsOpen(true);
 }
+
 </script>
 
 <style scoped>
