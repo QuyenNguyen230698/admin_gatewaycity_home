@@ -34,6 +34,7 @@
               </label>
               <div class="flex flex-col dropdown-content menu z-20 w-24 bg-base-300 p-1 shadow rounded">
                 <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Update</button>
+                <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Published</button>
                 <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Draft</button>
                 <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Delete</button>
               </div>

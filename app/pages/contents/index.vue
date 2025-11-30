@@ -15,7 +15,7 @@
              
 
               <!-- Dropdown for Import/JSON Actions -->
-              <div class="relative">
+              <!-- <div class="relative">
                   <button 
                       class="flex items-center gap-2 px-4 py-2 bg-red-500 text-black text-sm font-medium rounded-md hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 transition-all duration-200 shadow-sm"
                       @click="toggleImportMenu"
@@ -40,10 +40,10 @@
                           <i class="bi bi-filetype-json"></i> Import JSON
                       </button>
                   </div>
-              </div>
+              </div> -->
 
               <!-- Dropdown for View Actions -->
-              <div class="relative">
+              <!-- <div class="relative">
                   <button 
                       class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-black text-sm font-medium rounded-md hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 transition-all duration-200 shadow-sm"
                       @click="toggleViewMenu"
@@ -68,23 +68,33 @@
                           <i class="bi bi-filetype-json"></i> View JSON
                       </button>
                   </div>
-              </div>
-              <button 
+              </div> -->
+              <!-- <button 
                   @click="openSendEmailTest"
                   class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 focus:ring-2 focus:ring-purple-300 transition-all duration-200 shadow-sm"
               >
                   <i class="bi bi-envelope"></i> Test Email
-              </button>
+              </button> -->
               </div>
               <button 
                   @click="showSaveModal = true"
                   class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-300 transition-all duration-200 shadow-sm"
               >
-                  <i class="bi bi-floppy"></i> Save
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0 1 20.25 6v12A2.25 2.25 0 0 1 18 20.25H6A2.25 2.25 0 0 1 3.75 18V6A2.25 2.25 0 0 1 6 3.75h1.5m9 0h-9" />
+              </svg>
+                  Save
               </button>
               
           </div>
           <div class="divider divider-horizontal"></div>
+          <div class="flex w-fit h-full grow place-items-center  items-center justify-center">
+            <label for="media_library" class="cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
+              </svg>
+            </label>
+          </div>
       </div>
       
       <!-- Email Editor -->
@@ -100,6 +110,9 @@
               @load="editorLoaded"
               @ready="editorReady"
           />
+          <div class="relative z-40">
+            <MediaDrawer  />
+          </div>
           <!-- <div v-if="isHiddenBrand" :style="{backgroundColor: '#EEEEEE'}" class="absolute bottom-0 left-2/3 right-0 z-40 flex min-h-12 items-center justify-between"></div> -->
       </div>
      
@@ -118,13 +131,13 @@
               </div>
               <!-- Tab navigation -->
               <div class="flex border-b border-sand-200 mb-4">
-                <button 
+                <!-- <button 
                   class="px-4 py-2 text-sm font-medium"
                   :class="activeTab === 'emailTemplate' ? 'border-b-2 border-indigo-600 text-black' : 'text-olive-900'"
                   @click="activeTab = 'emailTemplate'"
                 >
                   Email Template
-                </button>
+                </button> -->
                 <button 
                   class="px-4 py-2 text-sm font-medium"
                   :class="activeTab === 'landingPage' ? 'border-b-2 border-indigo-600 text-black' : 'text-olive-900'"
@@ -133,7 +146,7 @@
                   Landing Page
                 </button>
               </div>
-              <div v-if="activeTab === 'emailTemplate'" class="max-h-96 overflow-y-auto mb-6 border border-sand-200 rounded bg-sand-50">
+              <!-- <div v-if="activeTab === 'emailTemplate'" class="max-h-96 overflow-y-auto mb-6 border border-sand-200 rounded bg-sand-50">
                   <div 
                       v-for="(design, index) in emailTemplates" 
                       :key="index" 
@@ -148,7 +161,7 @@
                   <div v-if="!savedDesigns.length" class="px-5 py-4 text-black text-sm flex items-center gap-3">
                       <i class="bi bi-info-circle"></i> No designs found
                   </div>
-              </div>
+              </div> -->
               <div v-if="activeTab === 'landingPage'" class="max-h-96 overflow-y-auto mb-6 border border-sand-200 rounded bg-sand-50">
                   <div 
                       v-for="(design, index) in landingPages" 
@@ -303,7 +316,6 @@
                       v-model="designType" 
                       class="w-full px-4 py-2 border border-sand-300 text-black rounded text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 bg-slate-50"
                   >
-                      <option value="emailTemplate">Email Template</option>
                       <option value="landingPage">Landing Page</option>
                   </select>
               </div>
@@ -327,13 +339,13 @@
                       @click="saveDesign(newDesignName || `Thiết_kế_${Date.now()}`, designType)"
                       class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-300 transition-all duration-200"
                   >
-                      <i class="bi bi-floppy"></i> Save
+                      Save
                   </button>
                   <button 
                       @click="showSaveModal = false" 
                       class="flex items-center gap-2 px-4 py-2 bg-slate-200 text-black text-sm font-medium rounded hover:bg-slate-300 focus:ring-2 focus:ring-slate-100 transition-all duration-200"
                   >
-                      <i class="bi bi-x-circle"></i> Close
+                      Close
                   </button>
               </div>
           </div>
@@ -471,7 +483,7 @@ const showImportMenu = ref(false);
 const showViewMenu = ref(false);
 const savedDesigns = ref([]);
 const newDesignName = ref('');
-const designType = ref('emailTemplate');
+const designType = ref('landingPage');
 const jsonInput = ref('');
 const htmlOutput = ref('');
 const jsonOutput = ref('');
@@ -481,18 +493,30 @@ const testEmailCampaign = ref('Test Campaign');
 
 // Load saved designs
 const loadSavedDesigns = async () => {
-  try {
-    const result = await $fetch(`${config.public.apiBase}/template-design/list`, {
-        method: 'GET',
-      });
-    savedDesigns.value = result.data;
-  } catch (error) {
-    console.error('Error loading designs from Server:', error);
-    savedDesigns.value = [];
-  }
+  // try {
+  //   const result = await $fetch(`${config.public.apiBase}/template-design/list`, {
+  //       method: 'GET',
+  //     });
+  //   savedDesigns.value = result.data;
+  // } catch (error) {
+  //   console.error('Error loading designs from Server:', error);
+  //   savedDesigns.value = [];
+  // }
+
+  savedDesigns.value = [
+    {
+        "_id" : "692a717e0e624820d7663a8d",
+        "name" : "Smart & Sustainable Architecture – Modular Solutions for the New Generation",
+        "design" : {},
+        "type" : "landingPage",
+        "status" : "published",
+        "createdAt" : "2025-11-29T04:07:26.841+0000",
+        "updatedAt" : "2025-11-29T04:07:26.841+0000",
+    }
+  ];
 };
 
-const activeTab = ref('emailTemplate');
+const activeTab = ref('landingPage');
 // Lọc và đảo ngược savedDesigns theo type
 const emailTemplates = computed(() => {
   return [...savedDesigns.value]
@@ -560,7 +584,7 @@ const saveDesign = async (name, type = designType.value, _id = null) => {
       });
       
       newDesignName.value = '';
-      designType.value = 'emailTemplate';
+      designType.value = 'landingPage';
       showSaveModal.value = false;
       showToastMessage('success', `Design "${name}" (${type}) saved successfully!`);
       await loadSavedDesigns(); // Refresh the list after saving

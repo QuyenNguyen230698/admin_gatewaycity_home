@@ -5,7 +5,7 @@
       <div class="w-full px-10 mx-auto flex flex-col h-screen bg-1414">
         <!-- Header -->
         <div class="sticky top-0 z-10 bg-1414 flex justify-between items-center pt-10 pb-5">
-          <h2 class="text-lg md:text-xl lg:text-2xl font-bold flex gap-2 items-center uppercase font-bold-sans text-white">
+          <h2 class="text-lg md:text-xl lg:text-2xl font-bold flex gap-2 items-center uppercase font-bold-sans">
             Edit Information
           </h2>
           <button @click="close" class="btn btn-ghost btn-circle" aria-label="Close">
@@ -22,19 +22,53 @@
           </button>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 overflow-y-auto flex flex-col items-start justify-start gap-6">
-            <p>Main Content</p>
-        </div>
-
-        <!-- Footer -->
-        <div class="sticky bottom-0 z-10 w-full flex justify-between items-center py-5">
-            <button @click="close" class="btn btn-ghost btn-sm tooltip tooltip-right" data-tip="Close">
-                Close
-            </button>
-            <button @click="saveInformation" class="btn btn-primary btn-sm tooltip tooltip-right" data-tip="Save">
-                Save
-            </button>
+        <div class="max-w-4xl mx-auto p-4">
+            <div class="space-y-8">
+                <!-- Basic SEO Section -->
+                <div class="bg-white/5 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4">Basic SEO Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="block text-sm font-medium mb-2">
+                                Banner <span class="text-error">*</span>
+                            </label>
+                            <input v-model="formNews.src" type="text" 
+                                placeholder="Enter URL path..." 
+                                class="w-full px-3 py-2 bg-transparent border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                                required />
+                        </div>
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="block text-sm font-medium mb-2">
+                                Title <span class="text-error">*</span>
+                            </label>
+                            <input v-model="formNews.title" type="text" 
+                                placeholder="Enter page title..." 
+                                class="w-full px-3 py-2 bg-transparent border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                                required />
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium mb-2">
+                                Description <span class="text-error">*</span>
+                            </label>
+                            <textarea v-model="formNews.description" 
+                                placeholder="Enter page description..." 
+                                rows="3"
+                                class="w-full px-3 py-2 bg-transparent border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                        </div>
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="block text-sm font-medium mb-2">
+                                Type <span class="text-error">*</span>
+                            </label>
+                            <select v-model="formNews.type" 
+                                class="w-full px-3 py-2 bg-transparent border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="">Select Type</option>
+                                <option value="NEWS">NEWS</option>
+                                <option value="EVENTS">EVENTS</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
       </div>
     </div>
@@ -47,6 +81,13 @@ import { ref, computed, watch, nextTick } from 'vue';
 const informationStore = useInformationStore();
 const config = useAppConfig();
 const isSaving = ref(false);
+
+const formNews = ref({
+  title: '',
+  description: '',
+  type: 'NEWS',
+  src: '',
+})
 
 const generateContentStyles = (values) => {
     const styles = [];
