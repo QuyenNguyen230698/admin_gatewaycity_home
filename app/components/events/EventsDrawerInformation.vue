@@ -2,10 +2,10 @@
   <div class="drawer-side z-50">
     <label @click="close" aria-label="close sidebar" class="drawer-overlay"></label>
     <div class="menu p-0 m-0 flex min-h-screen w-3/4 lg:w-2/5 bg-base-200 text-base-content">
-      <div class="w-full px-10 mx-auto flex flex-col h-screen bg-1414">
+      <div class="w-full flex flex-col h-screen overflow-y-auto">
         <!-- Header -->
-        <div class="sticky top-0 z-10 bg-1414 flex justify-between items-center py-4">
-            <h2 class="font-bold text-xl uppercase text-blue-500">News Information</h2>
+        <div class="sticky top-0 z-10 bg-base-200 w-full px-10 mx-auto flex justify-between items-center py-4">
+            <h2 class="font-bold text-xl uppercase text-blue-500">Events Information</h2>
             <span @click="close" class="btn btn-lg btn-circle btn-ghost">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -13,7 +13,7 @@
             </span>
         </div>
 
-        <div class="max-w-4xl w-full">
+        <div class="max-w-4xl px-10 mx-auto w-full">
             <div class="space-y-8 w-full">
                 <!-- Basic News Section -->
                 <div class="bg-white/5 w-full">
@@ -62,7 +62,9 @@
             </div>
         </div>
 
-        <div class="sticky bottom-0 z-10 flex gap-2 items-center justify-center py-4">
+        <div v-html="htmlOutput"></div>
+
+        <div class="sticky bottom-0 bg-base-200 w-full px-10 mx-auto z-10 flex gap-2 items-center justify-center py-4">
             <button @click="close" class="w-1/2 py-1 border border-blue-700 hover:bg-blue-700 hover:text-white duration-300 transition-all rounded">Cancel</button>
             <button @click="saveInformation" class="w-1/2 py-1 border border-white hover:border-blue-700 hover:bg-white hover:text-black bg-blue-700 text-white duration-300 transition-all rounded">Save</button>
         </div>
@@ -84,6 +86,7 @@ const formEvents = ref({
   description: '',
   type: 'EVENTS',
   src: '',
+  content: '',
 })
 
 watch(receiveEvent, (newValue) => {
@@ -92,7 +95,8 @@ watch(receiveEvent, (newValue) => {
       title: newValue.title || '',
       description: newValue.description || '',
       type: newValue.type || 'EVENTS',
-      src: newValue.src || ''
+      src: newValue.src || '',
+      content: newValue.content || ''
     };
   }
 }, { immediate: true });
@@ -102,29 +106,19 @@ const clearForm = () => {
     title: '',
     description: '',
     type: 'EVENTS',
-    src: ''
+    src: '',
+    content: ''
   };
   // Reset store
   eventStore.reset();
 };
 
-const generateContentStyles = (values) => {
-    const styles = [];
-    // Thay đổi fontFamily
-    let fontFamily = values.fontFamily?.value || '';
-    if (fontFamily.includes('Montserrat')) {
-      fontFamily = "'Geoform-regular',sans-serif";
-    } else if (fontFamily.includes('Lato')) {
-      fontFamily = "'Quicksand',sans-serif";
-    }
-    if (fontFamily) styles.push(`font-family: ${fontFamily};`);
-    if (values.fontSize) styles.push(`font-size: ${values.fontSize};`);
-    if (values.fontWeight) styles.push(`font-weight: ${values.fontWeight};`);
-    if (values.textAlign) styles.push(`text-align: ${values.textAlign};`);
-    if (values.lineHeight) styles.push(`line-height: ${values.lineHeight};`);
-    if (values.containerPadding) styles.push(`padding: ${values.containerPadding};`);
-    return styles.join(' ');
-};
+const htmlOutput = computed(() => {
+  if (formEvents.value.content) {
+    return formEvents.value.content;
+  }
+  return '';
+})
 
 function convertUnlayerToHtml(json) {
   // Hàm hỗ trợ để tạo inline style từ object values
@@ -157,6 +151,11 @@ function convertUnlayerToHtml(json) {
     const styles = [];
     // Thay đổi fontFamily
     let fontFamily = values.fontFamily?.value || '';
+    if (fontFamily.includes('Montserrat')) {
+      fontFamily = "'Geoform-regular',sans-serif";
+    } else if (fontFamily.includes('Lato')) {
+      fontFamily = "'Quicksand',sans-serif";
+    }
     if (fontFamily) styles.push(`font-family: ${fontFamily};`);
     if (values.fontSize) styles.push(`font-size: ${values.fontSize};`);
     if (values.fontWeight) styles.push(`font-weight: ${values.fontWeight};`);
