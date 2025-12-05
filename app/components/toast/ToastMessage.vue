@@ -74,7 +74,7 @@ const toastWidthClass = computed(() => {
 const toastClass = computed(() => {
   switch (props.typeToast) {
     case 'success':
-      return 'bg-custom-green'; // Màu cho toast thành công
+      return 'bg-green-600'; // Màu cho toast thành công
     case 'error':
       return 'bg-red-600'; // Màu cho toast lỗi
     case 'warning':

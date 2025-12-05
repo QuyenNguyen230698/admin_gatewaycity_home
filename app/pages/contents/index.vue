@@ -15,13 +15,18 @@
              
 
               <!-- Dropdown for Import/JSON Actions -->
-              <!-- <div class="relative">
+              <div class="relative">
                   <button 
-                      class="flex items-center gap-2 px-4 py-2 bg-red-500 text-black text-sm font-medium rounded-md hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 transition-all duration-200 shadow-sm"
+                      class="flex items-center gap-2 px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-md hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 transition-all duration-200 shadow-sm"
                       @click="toggleImportMenu"
                   >
-                      <i class="bi bi-box-arrow-in-down"></i> Import
-                      <i class="bi bi-chevron-down"></i>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m8.25 3v6.75m0 0-3-3m3 3 3-3M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+                      </svg>
+                      Import
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                      </svg>
                   </button>
                   <div 
                       v-if="showImportMenu"
@@ -31,16 +36,19 @@
                           @click="showImportModal = true; showImportMenu = false"
                           class="w-full flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-sand-100 transition-all duration-200"
                       >
-                          <i class="bi bi-box-arrow-in-down"></i> Import Design
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+                          </svg>
+                          Import Design
                       </button>
-                      <button 
+                      <!-- <button 
                           @click="showImportJsonModal = true; showImportMenu = false"
                           class="w-full flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-sand-100 transition-all duration-200"
                       >
                           <i class="bi bi-filetype-json"></i> Import JSON
-                      </button>
+                      </button> -->
                   </div>
-              </div> -->
+              </div>
 
               <!-- Dropdown for View Actions -->
               <!-- <div class="relative">
@@ -172,7 +180,10 @@
                     <i class="bi bi-file-earmark-medical text-black"></i>
                     <span class="font-medium flex-1" @click="importDesign(design)">{{ design.name }}</span>
                     <span class="text-xs text-black">{{ new Date(design.createdAt).toLocaleString() }}</span>
-                    <i class="bi bi-trash text-olive-900 hover:text-red-700 ml-4" @click.stop="deleteDesign(design._id)"></i>
+                    <svg @click.stop="deleteDesign(design._id)" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-olive-900 hover:text-red-700 ml-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+
                   </div>
                   <div v-if="!savedDesigns.length" class="px-5 py-4 text-black text-sm flex items-center gap-3">
                       <i class="bi bi-info-circle"></i> No designs found
@@ -190,7 +201,7 @@
       </div>
 
       <!-- Import JSON Modal -->
-      <div v-if="showImportJsonModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-6 z-50">
+      <!-- <div v-if="showImportJsonModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-6 z-50">
           <div class="bg-white p-8 rounded-2xl max-w-lg w-full shadow-2xl border ">
               <div class="flex items-center justify-between mb-6">
                   <h2 class="text-xl font-semibold text-black flex items-center gap-3">
@@ -222,10 +233,10 @@
                   </button>
               </div>
           </div>
-      </div>
+      </div> -->
 
       <!-- View HTML Modal -->
-      <div v-if="showHtmlModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-6 z-50">
+      <!-- <div v-if="showHtmlModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-6 z-50">
           <div class="bg-white p-8 rounded-2xl max-w-3xl w-full shadow-2xl border">
               <div class="flex items-center justify-between mb-6">
                   <h2 class="text-xl font-semibold text-black flex items-center gap-3">
@@ -257,10 +268,10 @@
                   </button>
               </div>
           </div>
-      </div>
+      </div> -->
 
       <!-- View JSON Modal -->
-      <div v-if="showJsonModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-6 z-50">
+      <!-- <div v-if="showJsonModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-6 z-50">
           <div class="bg-white p-8 rounded-2xl max-w-3xl w-full shadow-2xl border">
               <div class="flex items-center justify-between mb-6">
                   <h2 class="text-xl font-semibold text-black flex items-center gap-3">
@@ -292,7 +303,7 @@
                   </button>
               </div>
           </div>
-      </div>
+      </div> -->
 
       <!-- Save Modal -->
       <div v-if="showSaveModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-6 z-50">
@@ -352,7 +363,7 @@
       </div>
 
       <!-- Send Test Email Modal -->
-      <div v-if="showTestEmailModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-6 z-50">
+      <!-- <div v-if="showTestEmailModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-6 z-50">
           <div class="bg-white p-8 rounded-2xl max-w-lg w-full shadow-2xl border">
               <div class="flex items-center justify-between mb-6">
                   <h2 class="text-xl font-semibold text-black flex items-center gap-3">
@@ -406,11 +417,17 @@
                   </button>
               </div>
           </div>
-      </div>
+      </div> -->
 
-      <!-- Media Library Modal -->
-      <ejs-toast ref="notificationToast" :position="{ X: 'right', Y: 'Top' }">
-      </ejs-toast>
+      <!-- Media Library toast -->
+      <ToastMessage
+        ref="toastRef"
+        :typeToast="currentToastType"
+        :message="toastMessage"
+        :show="showToast"
+        :width="`w-2/3 lg:w-fit`"
+        class="z-40"
+      />
   </div>
   <div class="lg:hidden">
     <div class="overflow-hidden flex flex-col flex-grow h-fit items-center justify-center w-full bg-gray-50">
@@ -433,16 +450,32 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { EmailEditor } from 'vue-email-editor';
-//#region QuyenNC ( toast ejs )
-const {$ej2ToastMessage} = useNuxtApp(); 
-const notificationToast = ref(null);
-const showToastMessage = (type, message) => {
-    notificationToast.value.show(
-      $ej2ToastMessage.message({
-        type: type,
-        customContent: message
-      }));
-}
+//#region QuyenNC ( toast )
+const toastRef = ref(null);
+const toastImageRef = ref(null); // Thêm ref cho ToastImage
+const showToast = ref(false);
+const showToastImage = ref(false); // Thêm biến để điều khiển hiển thị của ToastImage
+const currentToastType = ref("");
+const toastMessage = ref("");
+const toastImageUrl = ref(""); // Thêm biến để lưu URL cho ToastImage
+const showMessageToast = (type, message, url = "") => {
+  currentToastType.value = type;
+  toastMessage.value = message;
+  showToast.value = !url; // Chỉ hiển thị Toast nếu không có URL
+  showToastImage.value = !!url; // Hiển thị ToastImage nếu có URL
+  toastImageUrl.value = url; // Gán URL cho ToastImage
+
+  if (url !== "") {
+    if (toastImageRef.value) {
+      // Hiển thị ToastImage khi showMessageToast được gọi
+      toastImageRef.value.show();
+    }
+  } else {
+    if (toastRef.value) {
+      toastRef.value.show();
+    }
+  }
+};
 //#endregion
 
 // Configuration data
@@ -493,27 +526,27 @@ const testEmailCampaign = ref('Test Campaign');
 
 // Load saved designs
 const loadSavedDesigns = async () => {
-  // try {
-  //   const result = await $fetch(`${config.public.apiBase}/template-design/list`, {
-  //       method: 'GET',
-  //     });
-  //   savedDesigns.value = result.data;
-  // } catch (error) {
-  //   console.error('Error loading designs from Server:', error);
-  //   savedDesigns.value = [];
-  // }
+  try {
+    const result = await $fetch(`${config.public.apiBase}/template-design/list`, {
+        method: 'GET',
+      });
+    savedDesigns.value = result.data;
+  } catch (error) {
+    console.error('Error loading designs from Server:', error);
+    savedDesigns.value = [];
+  }
 
-  savedDesigns.value = [
-    {
-        "_id" : "692a717e0e624820d7663a8d",
-        "name" : "Smart & Sustainable Architecture – Modular Solutions for the New Generation",
-        "design" : {},
-        "type" : "landingPage",
-        "status" : "published",
-        "createdAt" : "2025-11-29T04:07:26.841+0000",
-        "updatedAt" : "2025-11-29T04:07:26.841+0000",
-    }
-  ];
+  // savedDesigns.value = [
+  //   {
+  //       "_id" : "692a717e0e624820d7663a8d",
+  //       "name" : "Smart & Sustainable Architecture – Modular Solutions for the New Generation",
+  //       "design" : {},
+  //       "type" : "landingPage",
+  //       "status" : "published",
+  //       "createdAt" : "2025-11-29T04:07:26.841+0000",
+  //       "updatedAt" : "2025-11-29T04:07:26.841+0000",
+  //   }
+  // ];
 };
 
 const activeTab = ref('landingPage');
@@ -537,10 +570,10 @@ const deleteDesign = async (_id) => {
       body: { _id },
     });
     await loadSavedDesigns();
-    showToastMessage('success', 'Design deleted successfully!');
+    showMessageToast('success', 'Design deleted successfully!');
   } catch (error) {
     console.error('Error deleting design from Server:', error);
-    showToastMessage('error', 'Failed to delete design. Please try again.');
+    showMessageToast('error', 'Failed to delete design. Please try again.');
   }
 };
 
@@ -553,19 +586,9 @@ const editorReady = () => {
   isHiddenBrand.value = true
 };
 
-const toggleImportMenu = () => {
-  showImportMenu.value = !showImportMenu.value;
-  showViewMenu.value = false;
-};
-
-const toggleViewMenu = () => {
-  showViewMenu.value = !showViewMenu.value;
-  showImportMenu.value = false;
-};
-
 const saveDesign = async (name, type = designType.value, _id = null) => {
   if (!name) {
-    showToastMessage('error', 'Please enter a design name');
+    showMessageToast('error', 'Please enter a design name');
     return;
   }
   
@@ -586,10 +609,10 @@ const saveDesign = async (name, type = designType.value, _id = null) => {
       newDesignName.value = '';
       designType.value = 'landingPage';
       showSaveModal.value = false;
-      showToastMessage('success', `Design "${name}" (${type}) saved successfully!`);
+      showMessageToast('success', `Design "${name}" (${type}) saved successfully!`);
       await loadSavedDesigns(); // Refresh the list after saving
     } catch (error) {
-      showToastMessage('error', 'Failed to save design. Please try again.');
+      showMessageToast('error', 'Failed to save design. Please try again.');
     }
   });
 };
@@ -599,6 +622,16 @@ const updateExistingDesign = (existingDesign) => {
   const name = newDesignName.value || existingDesign.name; // Use new name if provided, else keep existing
   const type = designType.value; // Use the selected type from the modal
   saveDesign(name, type, existingDesign._id); // Pass _id for update
+};
+
+const toggleImportMenu = () => {
+  showImportMenu.value = !showImportMenu.value;
+  showViewMenu.value = false;
+};
+
+const toggleViewMenu = () => {
+  showViewMenu.value = !showViewMenu.value;
+  showImportMenu.value = false;
 };
 
 const exportHtml = () => {
@@ -614,7 +647,7 @@ const viewJson = () => {
       jsonOutput.value = JSON.stringify(design, null, 2);
       showJsonModal.value = true;
     } catch (error) {
-      showToastMessage('error', 'Failed to create JSON. Please try again.');
+      showMessageToast('error', 'Failed to create JSON. Please try again.');
     }
   });
 };
@@ -622,12 +655,12 @@ const viewJson = () => {
 const copyJsonToClipboard = () => {
   try {
     navigator.clipboard.writeText(jsonOutput.value).then(() => {
-      showToastMessage('success', 'JSON copied to clipboard!');
+      showMessageToast('success', 'JSON copied to clipboard!');
     }).catch(() => {
-      showToastMessage('error', 'Failed to copy JSON to clipboard.');
+      showMessageToast('error', 'Failed to copy JSON to clipboard.');
     });
   } catch (error) {
-    showToastMessage('error', 'Failed to copy JSON to clipboard.');
+    showMessageToast('error', 'Failed to copy JSON to clipboard.');
   }
 };
 
@@ -639,21 +672,21 @@ const importDesign = (design) => {
     const cleanDesign = JSON.parse(JSON.stringify(design.design));
     emailEditor.value?.editor.loadDesign(cleanDesign, (error) => {
       if (error) {
-        showToastMessage('error', 'Failed to load design. Design may be corrupted.');
+        showMessageToast('error', 'Failed to load design. Design may be corrupted.');
       } 
     });
     newDesignName.value = design.name;
     designType.value = design.type;
     showImportModal.value = false;
   } catch (error) {
-    showToastMessage('error', 'Failed to import design. Please select a valid design.');
+    showMessageToast('error', 'Failed to import design. Please select a valid design.');
   }
 };
 
 const importJsonDesign = () => {
   try {
     if (!jsonInput.value) {
-      showToastMessage('error', 'Please paste a valid JSON design.');
+      showMessageToast('error', 'Please paste a valid JSON design.');
       return;
     }
     const parsedDesign = JSON.parse(jsonInput.value);
@@ -662,15 +695,15 @@ const importJsonDesign = () => {
     }
     emailEditor.value?.editor.loadDesign(parsedDesign, (error) => {
       if (error) {
-        showToastMessage('error', 'Failed to load JSON design. Design may be corrupted.');
+        showMessageToast('error', 'Failed to load JSON design. Design may be corrupted.');
       } else {
-        showToastMessage('success', 'JSON design imported successfully!');
+        showMessageToast('success', 'JSON design imported successfully!');
       }
     });
     showImportJsonModal.value = false;
     jsonInput.value = '';
   } catch (error) {
-    showToastMessage('error', 'Failed to import JSON design. Please ensure JSON is valid.');
+    showMessageToast('error', 'Failed to import JSON design. Please ensure JSON is valid.');
   }
 };
 
@@ -681,7 +714,7 @@ const viewHtml = () => {
       htmlOutput.value = data.html;
       showHtmlModal.value = true;
     } catch (error) {
-      showToastMessage('error', 'Failed to create HTML. Please try again.');
+      showMessageToast('error', 'Failed to create HTML. Please try again.');
     }
   });
 };
@@ -689,12 +722,12 @@ const viewHtml = () => {
 const copyHtmlToClipboard = () => {
   try {
     navigator.clipboard.writeText(htmlOutput.value).then(() => {
-      showToastMessage('success', 'HTML copied to clipboard!');
+      showMessageToast('success', 'HTML copied to clipboard!');
     }).catch(() => {
-      showToastMessage('error', 'Failed to copy HTML to clipboard.');
+      showMessageToast('error', 'Failed to copy HTML to clipboard.');
     });
   } catch (error) {
-    showToastMessage('error', 'Failed to copy HTML to clipboard.');
+    showMessageToast('error', 'Failed to copy HTML to clipboard.');
   }
 };
 
@@ -704,20 +737,20 @@ const openSendEmailTest = () => {
       htmlOutput.value = data.html;
       showTestEmailModal.value = true;
     } catch (error) {
-      showToastMessage('error', 'Failed to create HTML. Please try again.');
+      showMessageToast('error', 'Failed to create HTML. Please try again.');
     }
   });
 };
 
 const sendTestEmail = async () => {
   if (!testEmailTo.value || !testEmailSubject.value || !testEmailCampaign.value) {
-    showToastMessage('error', 'Please fill in all required fields: email, subject, campaign, and design.');
+    showMessageToast('error', 'Please fill in all required fields: email, subject, campaign, and design.');
     return;
   }
   
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(testEmailTo.value)) {
-    showToastMessage('error', 'Please enter a valid email address.');
+    showMessageToast('error', 'Please enter a valid email address.');
     return;
   }
   try {
@@ -737,9 +770,9 @@ const sendTestEmail = async () => {
     });
 
     if (response.result) {
-      showToastMessage('success', 'Test email sent successfully!');
+      showMessageToast('success', 'Test email sent successfully!');
     } else {
-      showToastMessage('error', response.message || 'Failed to send test email.');
+      showMessageToast('error', response.message || 'Failed to send test email.');
     }
 
     showTestEmailModal.value = false;
@@ -749,7 +782,7 @@ const sendTestEmail = async () => {
     testEmailCampaign.value = 'Test Campaign';
   } catch (error) {
     console.error('Error in sendTestEmail:', error);
-    showToastMessage('error', 'Failed to send test email: ' + error.message);
+    showMessageToast('error', 'Failed to send test email: ' + error.message);
   }
 };
 
