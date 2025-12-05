@@ -67,8 +67,8 @@
         <div class="p-2 border-t border-base-300">
           <div class="flex items-center justify-between p-2">
             <div class="flex flex-col gap-1">
-              <span class="font-bold text-xs is-drawer-close:hidden">{{ user.name }}</span>
-              <span class="text-xs is-drawer-close:hidden">{{ user.role }}</span>
+              <span class="font-bold text-xs is-drawer-close:hidden">{{ user?.email }}</span>
+              <span class="text-xs is-drawer-close:hidden">{{ user?.roles }}</span>
             </div>
             <button @click="openLogoutModal" class="btn btn-sm px-2 tooltip tooltip-right">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -110,29 +110,28 @@
 
 <script setup>
 const route = useRoute()
-const showLogoutModal = ref(false);
+
+// State lưu user cho UI, nhưng không tự redirect
 const user = ref({
-  name: '',
-  role: ''
-});
+  email: '',
+  roles: ''
+})
+
+const showLogoutModal = ref(false)
 
 // Tự động đổi tiêu đề theo route
 const pageTitle = computed(() => {
   const path = route.path
 
   if (path.includes('/news')) return 'News (Tin tức)'
-  if (path.includes('/events')) return 'Events (Sự kiện)'
   if (path.includes('/contents')) return 'Create Contents (Tạo nội dung)'
 
   return 'Admin Gatewaycity Homes'
 })
 
-const drawerRef = ref(null);
+const drawerRef = ref(null)
 
-const openLogoutModal = () => {
-  showLogoutModal.value = true;
-};
-
+// Logout chỉ xóa session, redirect để guard xử lý
 const logout = () => {
   if (process.client) {
     localStorage.removeItem('loginSession')
@@ -141,18 +140,30 @@ const logout = () => {
 }
 
 onMounted(() => {
+  if (!process.client) return
+
   const session = localStorage.getItem('loginSession')
-  if (session) {
-    const data = JSON.parse(session)
-    user.value.name = data.user.name
-    user.value.role = data.user.role
+  if (!session) return navigateTo('/login')
+
+  let data = null
+  try {
+    data = JSON.parse(session)
+  } catch (e) {
+    return navigateTo('/login')
   }
-  if (!session) {
-    navigateTo('/login')
-  }
+
+  if (!data.user) return navigateTo('/login')
+
+  user.value.email = data.user.email || ''
+  user.value.roles = data.user.roles || ''
 })
 
+
+const openLogoutModal = () => {
+  showLogoutModal.value = true
+}
 </script>
+
 
 <style scoped>
 /* Khi sidebar thu gọn (mobile), ẩn chữ, chỉ hiện icon + tooltip */

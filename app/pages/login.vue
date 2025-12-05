@@ -26,11 +26,11 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1.5">Tài khoản</label>
             <input
-              v-model="username"
+              v-model="email"
               type="text"
               required
-              autocomplete="username"
-              placeholder="Nhập tài khoản"
+              autocomplete="email"
+              placeholder="Nhập tài khoản email"
               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none bg-white/70 transition"
             />
           </div>
@@ -81,35 +81,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-// Biến form
-const username = ref('')
+const config = useRuntimeConfig()
+
+const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const error = ref('')
 
-// Danh sách tài khoản nội bộ - DỄ DÀNG THÊM MỚI
-const validAccounts = [
-  {
-    username: 'admin',
-    password: 'Admin@123',
-    name: 'Administrator',
-    role: 'admin'
-  },
-  {
-    username: 'manager',
-    password: 'Manager2025!',
-    name: 'Quản lý khu vực',
-    role: 'manager'
-  },
-  {
-    username: 'staff01',
-    password: 'Staff@456',
-    name: 'Nhân viên 01',
-    role: 'staff'
-  }
-]
-
-// Hàm kiểm tra session còn hạn không
+// Kiểm tra session
 const isLoginSessionValid = () => {
   const session = localStorage.getItem('loginSession')
   if (!session) return false
@@ -122,50 +101,58 @@ const isLoginSessionValid = () => {
   }
 }
 
-// Hàm xử lý đăng nhập
+// Xử lý login
 const handleLogin = async () => {
   error.value = ''
   loading.value = true
 
-  // Delay nhẹ cho cảm giác mượt
   await new Promise(resolve => setTimeout(resolve, 600))
 
-  // Tìm tài khoản khớp
-  const account = validAccounts.find(
-    acc => acc.username === username.value.trim() && acc.password === password.value
-  )
-
-  if (account) {
-    // Tạo session 24h
-    const expiry = new Date().getTime() + 24 * 60 * 60 * 1000
-
-    const loginData = {
-      user: {
-        username: account.username,
-        name: account.name,
-        role: account.role
+  try {
+    const response = await $fetch(`${config.public.apiBase}/users/login-admin`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      token: `internal-token-${account.username}-${Date.now()}`,
-      expiry
+      body: JSON.stringify({
+        email: email.value,
+        password: password.value,
+      }),
+    })
+
+    const { token, data: user } = response
+
+    // ⏳ Set expiry sau 24h (hoặc 5 phút tuỳ bạn)
+    const expiryTime = Date.now() + 24 * 60 * 60 * 1000
+
+    // 🔥 LƯU TẤT CẢ VÀO 1 OBJECT
+    const sessionData = {
+      token,
+      user,
+      expiry: expiryTime
     }
 
-    localStorage.setItem('loginSession', JSON.stringify(loginData))
+    localStorage.setItem('loginSession', JSON.stringify(sessionData))
 
-    // Chuyển hướng về trang chủ
-    navigateTo('/')
-  } else {
+    // Điều hướng về trang news
+    navigateTo('/news')
+
+  } catch (err) {
     error.value = 'Tài khoản hoặc mật khẩu không chính xác'
+  } finally {
     loading.value = false
   }
 }
 
-// Kiểm tra session khi load trang
+
+// Tự động login nếu session còn hợp lệ
 onMounted(() => {
   if (isLoginSessionValid()) {
     navigateTo('/')
   }
 })
 </script>
+
 
 <style scoped>
 .fade-enter-active, .fade-leave-active {
