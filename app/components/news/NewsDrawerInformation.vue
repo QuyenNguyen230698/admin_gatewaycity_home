@@ -132,6 +132,7 @@ const showMessageToast = (type, message, url = "") => {
 const receiveInformation = computed(() => informationStore.getInformation);
 
 const formNews = ref({
+  _id: '',
   title: '',
   description: '',
   type: '',
@@ -142,6 +143,7 @@ const formNews = ref({
 watch(receiveInformation, (newValue) => {
   if (newValue) {
     formNews.value = {
+      _id: newValue._id || '',
       title: newValue.title || '',
       description: newValue.description || '',
       type: newValue.type || '',
@@ -153,6 +155,7 @@ watch(receiveInformation, (newValue) => {
 
 const clearForm = () => {
   formNews.value = {
+    _id: '',
     title: '',
     description: '',
     type: '',

@@ -1,5 +1,8 @@
 <template>
-  <div class="overflow-x-auto bg-base-100 h-full">
+  <div class="overflow-x-auto bg-base-100 h-full relative">
+    <div v-if="isLoading" class="flex justify-center items-center h-full w-full absolute inset-0 z-50 bg-black/50">
+        <span class="loading loading-spinner loading-lg text-white"></span>
+    </div>
     <div class="flex items-center gap-4 px-6 py-2 border-b border-base-200">
       <button @click="openEditDrawer" class="btn text-xs">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
@@ -40,14 +43,14 @@
               </label>
               <div class="flex flex-col dropdown-content menu z-20 w-24 bg-base-300 p-1 shadow rounded">
                 <button @click="openUpdateDrawer(item)" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Update</button>
-                <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Published</button>
-                <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Draft</button>
-                <button class="hover:bg-stone-300 cursor-pointer py-1 px-3">Delete</button>
+                <button @click="statusUpdate(item._id, 'published')" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Published</button>
+                <button @click="statusUpdate(item._id, 'drafted')" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Draft</button>
+                <button @click="deleteNews(item._id)" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Delete</button>
               </div>
             </div>
           </td>
 
-          <!-- Cột 2: Hình ảnh (200px) -->
+          <!-- Cột 2: Hình ảnh (200px)-->
           <td>
             <div class="w-52 overflow-hidden">
               <img :src="item.src" :alt="item.title" class="object-cover w-full h-28" />
@@ -137,6 +140,7 @@ const showMessageToast = (type, message, url = "") => {
 
 const config = useRuntimeConfig();
 const newsData = ref([])
+const isLoading = ref(false)
 
 // const newsData = ref([
 //   {
@@ -200,6 +204,7 @@ const refreshNews = () => {
 }
 
 const fetchDataNews = async () => {
+  isLoading.value = true;
   try {
     const response = await $fetch(`${config.public.apiBase}/newandevents/list`, {
       method: 'GET',
@@ -215,6 +220,53 @@ const fetchDataNews = async () => {
   } catch (error) {
     console.error('Error fetching news:', error);
     newsData.value = [];
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+const deleteNews = async (_id) => {
+  isLoading.value = true;
+  try {
+    const response = await $fetch(`${config.public.apiBase}/newandevents/delete`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        _id: _id
+      }
+    });
+    fetchDataNews();
+    showMessageToast('success', 'Delete successfully');
+  } catch (error) {
+    console.error('Error deleting news:', error);
+    showMessageToast('error', 'Delete failed');
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+const statusUpdate = async (_id, status) => {
+  isLoading.value = true;
+  try {
+    const response = await $fetch(`${config.public.apiBase}/newandevents/update-status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        _id: _id,
+        status: status
+      }
+    });
+    fetchDataNews();
+    showMessageToast('success', 'Update successfully');
+  } catch (error) {
+    console.error('Error updating news:', error);
+    showMessageToast('error', 'Update failed');
+  } finally {
+    isLoading.value = false;
   }
 }
 
