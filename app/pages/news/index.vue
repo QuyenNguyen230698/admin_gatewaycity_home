@@ -18,13 +18,13 @@
     <table class="table table-zebra w-full">
       <thead>
         <tr class="bg-base-200 text-left text-xs uppercase">
-          <th class="w-20 text-center">Action</th>
-          <th class="w-72">Banner</th>
-          <th class="w-72">Title</th>
-          <th class="w-72">Description</th>
-          <th class="w-36 text-center">Status</th>
-          <th class="w-36 text-center">Type</th>
-          <th class="w-72">Slug</th>
+          <th class="w-20 text-center border-r">Action</th>
+          <th class="w-72 border-r">Banner</th>
+          <th class="w-72 border-r">Title</th>
+          <th class="w-72 border-r">Description</th>
+          <th class="w-36 text-center border-r">Status</th>
+          <th class="w-36 text-center border-r">Type</th>
+          <th class="w-72 border-r">Slug</th>
           <th class="w-72">Created At</th>
         </tr>
       </thead>
@@ -196,7 +196,7 @@ const openUpdateDrawer = (item) => {
 }
 
 const refreshNews = () => {
-  window.location.reload();
+  fetchDataNews()
 }
 
 const fetchDataNews = async () => {
