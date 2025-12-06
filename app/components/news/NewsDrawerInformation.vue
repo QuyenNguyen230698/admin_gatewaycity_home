@@ -1,5 +1,5 @@
 <template>
-  <div class="drawer-side z-50">
+  <div class="drawer-side drawer-end z-50">
     <label @click="close" aria-label="close sidebar" class="drawer-overlay"></label>
     <div class="menu p-0 m-0 flex min-h-screen w-3/4 lg:w-2/5 bg-base-200 text-base-content">
       <div class="flex flex-col h-screen overflow-y-auto">
@@ -12,7 +12,7 @@
                 </svg>
             </span>
         </div>
-
+        <!-- main -->
         <div class="max-w-4xl px-10 mx-auto w-full">
             <div class="space-y-8 w-full">
                 <!-- Basic News Section -->

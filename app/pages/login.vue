@@ -123,7 +123,7 @@ const handleLogin = async () => {
     const { token, data: user } = response
 
     // ⏳ Set expiry sau 24h (hoặc 5 phút tuỳ bạn)
-    const expiryTime = Date.now() + 24 * 60 * 60 * 1000
+    const expiryTime = Date.now() + 30 * 60 * 1000
 
     // 🔥 LƯU TẤT CẢ VÀO 1 OBJECT
     const sessionData = {
