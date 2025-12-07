@@ -4,9 +4,9 @@
         <div class="drawer-side">
             <label for="productGrid" aria-label="close sidebar" class="drawer-overlay"></label>
             <div class="relative flex flex-col bg-base-200 text-base-content min-h-screen w-2/3 h-full ">
-                <!-- <div v-if="isLoading" class="flex justify-center items-center h-full w-full absolute inset-0 z-50 bg-black/50">
+                <div v-if="isLoading" class="flex justify-center items-center h-full w-full absolute inset-0 z-50 bg-black/50">
                     <span class="loading loading-spinner loading-lg text-white"></span>
-                </div> -->
+                </div>
                 <!-- header -->
                 <header class="sticky top-0 bg-white flex items-center justify-between py-2 px-6 overflow-hidden">
                     <h2 class="font-bold text-xl uppercase text-blue-500">Media Library</h2>
@@ -18,18 +18,18 @@
                 </header>
                 <!-- Tab  -->
                 <div class="flex items-center gap-4 px-6 py-2 border-b border-base-200">
-                    <button @click="actionCreateimages" class="btn text-xs">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                    </svg>
+                    <div @click="actionCreateimages" class="cursor-pointer flex gap-2 btn btn-ghost">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                        </svg>
                         <span>Upload Images</span>
-                    </button>
-                    <button @click="refreshImages" class="btn text-xs">
+                    </div>
+                    <div @click="refreshImages" class="cursor-pointer flex gap-2 btn btn-ghost">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                         </svg>
                         <span>Refresh</span>
-                    </button>
+                    </div>
                 </div>
                 <!-- main -->
                 <main class="flex-1 overflow-y-auto bg-base-100">
@@ -140,6 +140,36 @@
 </template>
 
 <script setup>
+
+const isLoading = ref(false)
+//#region QuyenNC ( toast )
+const toastRef = ref(null);
+const toastImageRef = ref(null); // Thêm ref cho ToastImage
+const showToast = ref(false);
+const showToastImage = ref(false); // Thêm biến để điều khiển hiển thị của ToastImage
+const currentToastType = ref("");
+const toastMessage = ref("");
+const toastImageUrl = ref(""); // Thêm biến để lưu URL cho ToastImage
+const showMessageToast = (type, message, url = "") => {
+  currentToastType.value = type;
+  toastMessage.value = message;
+  showToast.value = !url; // Chỉ hiển thị Toast nếu không có URL
+  showToastImage.value = !!url; // Hiển thị ToastImage nếu có URL
+  toastImageUrl.value = url; // Gán URL cho ToastImage
+
+  if (url !== "") {
+    if (toastImageRef.value) {
+      // Hiển thị ToastImage khi showMessageToast được gọi
+      toastImageRef.value.show();
+    }
+  } else {
+    if (toastRef.value) {
+      toastRef.value.show();
+    }
+  }
+};
+//#endregion
+
 
 </script>
 

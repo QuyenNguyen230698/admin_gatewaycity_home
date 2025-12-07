@@ -80,6 +80,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const config = useRuntimeConfig()
 
@@ -135,7 +137,7 @@ const handleLogin = async () => {
     localStorage.setItem('loginSession', JSON.stringify(sessionData))
 
     // Điều hướng về trang news
-    navigateTo('/news')
+    router.push('/')
 
   } catch (err) {
     error.value = 'Tài khoản hoặc mật khẩu không chính xác'
@@ -148,7 +150,7 @@ const handleLogin = async () => {
 // Tự động login nếu session còn hợp lệ
 onMounted(() => {
   if (isLoginSessionValid()) {
-    navigateTo('/')
+    router.push('/')
   }
 })
 </script>
