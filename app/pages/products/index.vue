@@ -4,12 +4,12 @@
         <span class="loading loading-spinner loading-lg text-white"></span>
     </div>
     <div class="flex items-center gap-4 px-6 py-2 border-b border-base-200">
-        <label for="productGrid" class="cursor-pointer flex gap-2 btn btn-ghost">
+        <!-- <label for="productGrid" class="cursor-pointer flex gap-2 btn btn-ghost">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
           </svg>
           <span>Create Product</span>
-        </label>
+        </label> -->
       <div @click="refreshProducts" class="cursor-pointer flex gap-2 btn btn-ghost">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
           <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -29,13 +29,47 @@
         </tr>
       </thead>
       <tbody>
-         Product Info
+        <tr v-for="item in productsData" :key="item._id" class="hover:bg-base-200 transition">
+          <!-- Cột 1: Dropdown 3 chấm -->
+          <td class="text-center">
+            <div class="dropdown dropdown-bottom dropdown-start">
+              <label tabindex="0" class="btn btn-ghost btn-md">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                </svg>
+              </label>
+              <div class="flex flex-col dropdown-content menu z-20 w-24 bg-base-300 p-1 shadow rounded">
+                <label for="productGrid" @click="openUpdateDrawer(item)" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Update</label>
+              </div>
+            </div>
+          </td>
+
+          <!-- Cột 2: Hình ảnh (200px)-->
+          <td>
+            <div class="w-52 overflow-hidden">
+              <img :src="item.images[0]" :alt="item.title" class="object-cover w-full h-28" />
+            </div>
+          </td>
+
+          <!-- Cột 3: Title -->
+          <td class="text-xs max-w-xs truncate">{{ item.title }}</td>
+
+          <!-- Cột 4: Slug -->
+          <td class="font-mono text-xs text-base-content/70 break-all max-w-xs truncate">
+            {{ item.slug }}
+          </td>
+
+          <!-- Cột 5: Created At -->
+          <td class="text-xs text-nowrap">
+            {{ formatDate(item.createdAt) }}
+          </td>
+        </tr>
       </tbody>
     </table>
 
     <!-- Nếu không có dữ liệu -->
     <div v-if="!Array.isArray(productsData) || productsData.length === 0" class="text-center py-12 text-gray-500">
-      Chưa có tin tức nào.
+      Chưa có Sản Phẩm nào.
     </div>
     <ProductDrawer />
   </div>
@@ -50,7 +84,8 @@
 </template>
 
 <script setup>
-  // Toast
+const productStore = useProductStore();
+//#region QuyenNC ( toast )
 const toastRef = ref(null);
 const toastImageRef = ref(null); // Thêm ref cho ToastImage
 const showToast = ref(false);
@@ -76,10 +111,12 @@ const showMessageToast = (type, message, url = "") => {
     }
   }
 };
+//#endregion
 
 const isLoading = ref(false)
 const productsData = ref([    
     {
+        _id: '1',
         slug: 'biet-thu-don-lap',
         title: 'Biệt Thự Đơn Lập',
         features: [
@@ -129,6 +166,7 @@ const productsData = ref([
         }
     },
     {
+        _id: '2',
         slug: 'biet-thu-song-lap',
         title: 'Biệt Thự Song Lập',
         features: [
@@ -148,6 +186,7 @@ const productsData = ref([
         floor3: ''
     },
     {
+        _id: '3',
         slug: 'nha-pho-thuong-mai',
         title: 'Nhà Phố Thương Mại',
         features: [
@@ -178,6 +217,10 @@ const formatDate = (dateString) => {
     hour: '2-digit',
     minute: '2-digit'
   })
+}
+
+const openUpdateDrawer = (item) => {
+    productStore.setProduct(item);
 }
 
 const refreshProducts = () => {

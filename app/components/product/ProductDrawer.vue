@@ -8,32 +8,161 @@
                     <span class="loading loading-spinner loading-lg text-white"></span>
                 </div>
                 <!-- header -->
-                <header class="sticky top-0 bg-white flex items-center justify-between py-2 px-6 overflow-hidden">
-                    <h2 class="font-bold text-xl uppercase text-blue-500">Media Library</h2>
-                    <label  for="productGrid" class="btn btn-lg btn-circle btn-ghost">
+                <header class="sticky top-0 bg-white navbar flex items-center justify-between py-2 px-6">
+                    <label for="productGrid" class="btn btn-lg btn-circle btn-ghost">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
                     </label>
-                </header>
-                <!-- Tab  -->
-                <div class="flex items-center gap-4 px-6 py-2 border-b border-base-200">
-                    <div @click="actionCreateimages" class="cursor-pointer flex gap-2 btn btn-ghost">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                        </svg>
-                        <span>Upload Images</span>
+
+                    <h2 class="font-bold text-xl uppercase text-blue-500">Products Update</h2>
+
+                    <div class="flex gap-3">
+
+                        <!-- EDIT MODE OFF → SHOW EDIT BUTTON -->
+                        <button 
+                            v-if="!isEditMode"
+                            @click="startEdit"
+                            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md">
+                            Edit
+                        </button>
+
+                        <!-- EDIT MODE ON → SHOW SAVE + CANCEL -->
+                        <template v-else>
+                            <button 
+                                @click="saveEdit"
+                                class="px-4 py-2 bg-green-600 text-white rounded-md">Save</button>
+
+                            <button 
+                                @click="cancelEdit"
+                                class="px-4 py-2 bg-gray-400 text-white rounded-md">Cancel</button>
+                        </template>
+
                     </div>
-                    <div @click="refreshImages" class="cursor-pointer flex gap-2 btn btn-ghost">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                        </svg>
-                        <span>Refresh</span>
+                </header>
+
+                <!-- Tab  -->
+                <div class="flex gap-3 px-6 py-3 border-b border-base-200 bg-base-100">
+                <button 
+                    v-for="tab in ['features','images','blueprint','floor1','floor2','floor3']"
+                    :key="tab"
+                    @click="activeTab = tab"
+                    class="btn btn-sm"
+                    :class="activeTab === tab ? 'btn-primary text-white' : 'btn-ghost'"
+                >
+                    {{ tab }}
+                </button>
+                </div>
+
+                <!-- main -->
+                 <main class="flex-1 h-full overflow-y-auto bg-base-100 p-6">
+
+                <!-- ⭐ FEATURES (ARRAY) -->
+                <div v-if="activeTab === 'features'" class="p-6 space-y-4">
+                <div v-for="(item, index) in productStore.getProduct?.features" 
+                    :key="index" 
+                    class="border p-4 rounded-md space-y-2"
+                >
+                    <div v-if="!isEditMode" class="flex gap-3">
+                        <p class="font-semibold">{{ item.title }}</p>
+                        <p>{{ item.des }}</p>
+                    </div>
+
+                    <div v-else class="flex gap-3">
+                        <input 
+                        v-model="item.title"
+                        class="input input-bordered w-full"
+                        placeholder="Title"
+                        />
+                        <input 
+                        v-model="item.des"
+                        class="input input-bordered w-full"
+                        placeholder="Description"
+                        />
                     </div>
                 </div>
-                <!-- main -->
+                </div>
+
+                <!-- ⭐ IMAGE FEATURES (ARRAY) -->
+                <div v-if="activeTab === 'images'" class="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div v-for="(img, idx) in productStore.getProduct.images" :key="idx">
+                    <NuxtImg :src="img" class="rounded shadow" />
+
+                    <!-- Edit -->
+                    <input 
+                    v-if="isEditMode"
+                    v-model="productStore.getProduct.images[idx]"
+                    class="input input-bordered w-full mt-2"
+                    />
+                </div>
+                </div>
+
+                <!-- ⭐ BLUEPRINT (ARRAY) -->
+                <div v-if="activeTab === 'blueprint'" class="p-6 space-y-6">
+                <div 
+                    v-for="(item, index) in productStore.getProduct.blueprint"
+                    :key="index"
+                    class="border p-4 rounded-md"
+                >
+
+                    <!-- VIEW -->
+                    <template v-if="!isEditMode">
+                    <p class="font-semibold mb-2">{{ item.name }}</p>
+                    <NuxtImg :src="item.image" class="w-full rounded" />
+                    </template>
+
+                    <!-- EDIT -->
+                    <template v-else>
+                    <input 
+                        v-model="item.name"
+                        class="input input-bordered w-full mb-2"
+                        placeholder="Name"
+                    />
+                    <input 
+                        v-model="item.image"
+                        class="input input-bordered w-full"
+                        placeholder="Image URL"
+                    />
+                    </template>
+
+                </div>
+                </div>
+
+                <!-- ⭐ FLOOR1 / FLOOR2 / FLOOR3 (OBJECT) -->
+                <div v-if="['floor1','floor2','floor3'].includes(activeTab)"
+                class="p-6 space-y-6"
+                >
+                <div class="border p-4 rounded-md">
+
+                    <label class="font-semibold">Name</label>
+                    <div v-if="!isEditMode">{{ productStore.getProduct[activeTab].name }}</div>
+                    <input 
+                    v-else
+                    v-model="productStore.getProduct[activeTab].name"
+                    class="input input-bordered w-full"
+                    />
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                    <div 
+                        v-for="(img, idx) in productStore.getProduct[activeTab].image"
+                        :key="idx"
+                    >
+                        <NuxtImg :src="img" class="rounded shadow" />
+
+                        <input 
+                        v-if="isEditMode"
+                        v-model="productStore.getProduct[activeTab].image[idx]"
+                        class="input input-bordered w-full mt-2"
+                        />
+                    </div>
+                    </div>
+
+                </div>
+                </div>
+
+                </main>
+
                 <main class="flex-1 overflow-y-auto bg-base-100">
-                    Content
                 <!-- Nếu không có dữ liệu -->
                 <!-- <div v-if="!Array.isArray(imagesData) || imagesData.length === 0" class="text-center py-12 text-gray-500">
                 Chưa có ảnh nào.
@@ -140,38 +269,76 @@
 </template>
 
 <script setup>
+const productStore = useProductStore();
+const isLoading = ref(false);
 
-const isLoading = ref(false)
-//#region QuyenNC ( toast )
+//#region Toast
 const toastRef = ref(null);
-const toastImageRef = ref(null); // Thêm ref cho ToastImage
+const toastImageRef = ref(null);
 const showToast = ref(false);
-const showToastImage = ref(false); // Thêm biến để điều khiển hiển thị của ToastImage
+const showToastImage = ref(false);
 const currentToastType = ref("");
 const toastMessage = ref("");
-const toastImageUrl = ref(""); // Thêm biến để lưu URL cho ToastImage
+const toastImageUrl = ref("");
+
 const showMessageToast = (type, message, url = "") => {
   currentToastType.value = type;
   toastMessage.value = message;
-  showToast.value = !url; // Chỉ hiển thị Toast nếu không có URL
-  showToastImage.value = !!url; // Hiển thị ToastImage nếu có URL
-  toastImageUrl.value = url; // Gán URL cho ToastImage
+  showToast.value = !url;
+  showToastImage.value = !!url;
+  toastImageUrl.value = url;
 
-  if (url !== "") {
-    if (toastImageRef.value) {
-      // Hiển thị ToastImage khi showMessageToast được gọi
-      toastImageRef.value.show();
-    }
-  } else {
-    if (toastRef.value) {
-      toastRef.value.show();
-    }
-  }
+  if (url && toastImageRef.value) toastImageRef.value.show();
+  else if (toastRef.value) toastRef.value.show();
 };
 //#endregion
 
+// ⭐ FORM DATA – dữ liệu dùng để edit
+const formProducts = ref({});
 
+// ⭐ WATCH productStore.getProduct → khi có dữ liệu mới thì gán vào formProducts
+watch(
+  () => productStore.product,
+  (newVal) => {
+    if (newVal) {
+      formProducts.value = productStore.product;
+    }
+  },
+  { immediate: true } // load ngay lần đầu (nếu store đã có dữ liệu)
+);
+
+const isEditMode = ref(false);
+const activeTab = ref("features");
+
+// Nút bắt đầu edit
+const startEdit = () => {
+    isEditMode.value = true;
+};
+
+// Cancel edit → phục hồi store
+const cancelEdit = () => {
+  isEditMode.value = false;
+};
+
+// Lưu edit
+const saveEdit = () => {
+  isLoading.value = true;
+  try {
+    console.log(formProducts.value);
+    showMessageToast("success", "Updated successfully");
+    isEditMode.value = false;
+  } catch (e) {
+    showMessageToast("error", "Save failed");
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const resetForm = () => {
+  
+};
 </script>
+
 
 <style lang="scss" scoped>
 

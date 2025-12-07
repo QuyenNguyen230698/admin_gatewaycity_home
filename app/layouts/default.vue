@@ -136,6 +136,7 @@ const pageTitle = computed(() => {
   const path = route.path
 
   if (path.includes('/news')) return 'News (Tin tức)'
+  if (path.includes('/products')) return 'Products (Sản phẩm)'
   if (path.includes('/contents')) return 'Create Contents (Tạo nội dung)'
 
   return 'Admin Gatewaycity Homes'
