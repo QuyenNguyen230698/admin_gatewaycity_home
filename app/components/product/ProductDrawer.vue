@@ -3,7 +3,7 @@
         <input id="productGrid" type="checkbox" class="drawer-toggle" />
         <div class="drawer-side">
             <label for="productGrid" aria-label="close sidebar" class="drawer-overlay"></label>
-            <div class="relative flex flex-col bg-base-200 text-base-content min-h-screen w-2/3 h-full ">
+            <div class="relative flex flex-col bg-base-200 text-base-content min-h-screen w-full md:w-2/3 h-full ">
                 <div v-if="isLoading" class="flex justify-center items-center h-full w-full absolute inset-0 z-50 bg-black/50">
                     <span class="loading loading-spinner loading-lg text-white"></span>
                 </div>
@@ -15,144 +15,226 @@
                         </svg>
                     </label>
 
-                    <h2 class="font-bold text-xl uppercase text-blue-500">Products Update</h2>
+                    <h2 class="font-bold text-xl uppercase text-indigo-500">Products Update</h2>
 
-                    <div class="flex gap-3">
+                    <div class="flex gap-2">
 
                         <!-- EDIT MODE OFF → SHOW EDIT BUTTON -->
-                        <button 
+                        <div 
                             v-if="!isEditMode"
                             @click="startEdit"
-                            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md">
+                            class="flex items-center gap-2 px-4 py-1 bg-indigo-600 text-white hover:bg-indigo-700 rounded cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                            </svg>
                             Edit
-                        </button>
+                        </div>
 
                         <!-- EDIT MODE ON → SHOW SAVE + CANCEL -->
                         <template v-else>
-                            <button 
+                            <div 
                                 @click="saveEdit"
-                                class="px-4 py-2 bg-green-600 text-white rounded-md">Save</button>
+                                class="px-4 py-1 bg-green-600 text-white hover:bg-green-700 rounded cursor-pointer flex gap-2 items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+                                </svg>
+                                Save
+                            </div>
 
-                            <button 
+                            <div 
                                 @click="cancelEdit"
-                                class="px-4 py-2 bg-gray-400 text-white rounded-md">Cancel</button>
+                                class="px-4 py-1 bg-gray-400 text-white hover:bg-gray-500 rounded cursor-pointer flex gap-2 items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                                Cancel
+                            </div>
                         </template>
 
                     </div>
                 </header>
 
                 <!-- Tab  -->
-                <div class="flex gap-3 px-6 py-3 border-b border-base-200 bg-base-100">
-                <button 
-                    v-for="tab in ['features','images','blueprint','floor1','floor2','floor3']"
-                    :key="tab"
-                    @click="activeTab = tab"
-                    class="btn btn-sm"
-                    :class="activeTab === tab ? 'btn-primary text-white' : 'btn-ghost'"
-                >
-                    {{ tab }}
-                </button>
+                <div class="flex px-6 py-3 border-b bg-base-100 w-full overflow-x-auto scrollable">
+                    <div v-for="tab in ['features','images','blueprint','floor1','floor2','floor3']"
+                        :key="tab"
+                        @click="activeTab = tab"
+                        class="btn"
+                        :class="activeTab === tab ? 'text-indigo-600' : 'btn-ghost'"
+                    >
+                        {{ tab }}
+                    </div>
                 </div>
 
                 <!-- main -->
-                 <main class="flex-1 h-full overflow-y-auto bg-base-100 p-6">
+                 <main class="h-full overflow-y-auto bg-base-100 ">
 
                 <!-- ⭐ FEATURES (ARRAY) -->
-                <div v-if="activeTab === 'features'" class="p-6 space-y-4">
-                <div v-for="(item, index) in productStore.getProduct?.features" 
-                    :key="index" 
-                    class="border p-4 rounded-md space-y-2"
+                <div v-if="activeTab === 'features'" class="p-6 space-y-2">
+                <!-- Button Add -->
+                <div 
+                    v-if="isEditMode"
+                    @click="addFeature()"
+                    class="btn btn-ghost cursor-pointer"
                 >
-                    <div v-if="!isEditMode" class="flex gap-3">
-                        <p class="font-semibold">{{ item.title }}</p>
-                        <p>{{ item.des }}</p>
+                    + Add Feature
+                </div>
+
+                <div 
+                    v-for="(item, index) in productStore.getProduct?.features" 
+                    :key="index" 
+                    class="relative flex gap-2 w-full items-center"
+                >
+
+                    <!-- VIEW -->
+                    <div v-if="!isEditMode" class="gap-2 w-full grid grid-cols-2">
+                      <p class="font-semibold text-sm col-span-1 p-1 border rounded-md bg-gray-200">{{ item.title }}</p>
+                      <p class="text-sm col-span-1 p-1 border rounded-md bg-gray-200">{{ item.des }}</p>
                     </div>
 
-                    <div v-else class="flex gap-3">
-                        <input 
-                        v-model="item.title"
-                        class="input input-bordered w-full"
-                        placeholder="Title"
-                        />
-                        <input 
-                        v-model="item.des"
-                        class="input input-bordered w-full"
-                        placeholder="Description"
-                        />
+                    <!-- EDIT -->
+                    <div v-else class="grid grid-cols-2 gap-2 w-full">
+                      <input v-model="item.title" class="input text-sm input-bordered rounded-md col-span-1 w-full" placeholder="Title" />
+                      <input v-model="item.des" class="input text-sm input-bordered rounded-md col-span-1 w-full" placeholder="Description" />
                     </div>
+
+                                        <!-- Delete -->
+                    <div 
+                    v-if="isEditMode"
+                    @click="removeFeature(index)"
+                    class="btn btn-xs btn-error"
+                    >✕</div>
                 </div>
                 </div>
 
                 <!-- ⭐ IMAGE FEATURES (ARRAY) -->
-                <div v-if="activeTab === 'images'" class="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div v-for="(img, idx) in productStore.getProduct.images" :key="idx">
-                    <NuxtImg :src="img" class="rounded shadow" />
+                <div v-if="activeTab === 'images'" class="p-6 space-y-4">
 
-                    <!-- Edit -->
-                    <input 
+                <div 
                     v-if="isEditMode"
-                    v-model="productStore.getProduct.images[idx]"
-                    class="input input-bordered w-full mt-2"
+                    @click="addImage()"
+                    class="btn btn-ghost cursor-pointer"
+                >+ Add Image</div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div v-for="(img, idx) in productStore.getProduct.images" :key="idx" class="relative">
+
+                    <!-- Delete -->
+                    <div 
+                        v-if="isEditMode"
+                        @click="removeImage(idx)"
+                        class="p-1 text-white bg-red-500 hover:bg-red-600 transition-colors cursor-pointer rounded-full absolute top-2 right-2 z-10"
+                    ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+                    </div>
+
+                    <NuxtImg :src="img" class="rounded shadow w-full aspect-square object-cover" />
+
+                    <input 
+                        v-if="isEditMode"
+                        v-model="productStore.getProduct.images[idx]"
+                        class="input input-bordered w-full mt-2 text-sm"
+                        placeholder="Image URL"
                     />
+                    </div>
                 </div>
+
                 </div>
 
                 <!-- ⭐ BLUEPRINT (ARRAY) -->
                 <div v-if="activeTab === 'blueprint'" class="p-6 space-y-6">
+
                 <div 
-                    v-for="(item, index) in productStore.getProduct.blueprint"
+                    v-if="isEditMode"
+                    @click="addBlueprint()"
+                    class="btn btn-ghost cursor-pointer"
+                >+ Add Blueprint</div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div v-for="(item, index) in productStore.getProduct.blueprint"
                     :key="index"
-                    class="border p-4 rounded-md"
+                    class="border border-gray-400 shadow p-2 rounded-md space-y-2 relative"
                 >
+                    <!-- Delete -->
+                    <button 
+                    v-if="isEditMode"
+                    @click="removeBlueprint(index)"
+                    class="p-1 text-white bg-red-500 hover:bg-red-600 transition-colors cursor-pointer rounded-full absolute top-2 right-2 z-10"
+                    ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg></button>
 
                     <!-- VIEW -->
                     <template v-if="!isEditMode">
-                    <p class="font-semibold mb-2">{{ item.name }}</p>
-                    <NuxtImg :src="item.image" class="w-full rounded" />
+                    <p class="font-semibold text-sm mb-2">{{ item.name }}</p>
+                    <NuxtImg :src="item.image" class="w-full rounded aspect-square object-cover" />
                     </template>
 
                     <!-- EDIT -->
                     <template v-else>
                     <input 
                         v-model="item.name"
-                        class="input input-bordered w-full mb-2"
+                        class="input input-bordered border-gray-400 shadow text-sm w-full"
                         placeholder="Name"
                     />
+                    <NuxtImg :src="item.image" class="w-full rounded aspect-square object-cover mt-2" />
                     <input 
                         v-model="item.image"
-                        class="input input-bordered w-full"
+                        class="input input-bordered text-sm w-full mt-2"
                         placeholder="Image URL"
                     />
                     </template>
-
+                </div>
                 </div>
                 </div>
 
                 <!-- ⭐ FLOOR1 / FLOOR2 / FLOOR3 (OBJECT) -->
-                <div v-if="['floor1','floor2','floor3'].includes(activeTab)"
-                class="p-6 space-y-6"
-                >
-                <div class="border p-4 rounded-md">
+                <div v-if="['floor1','floor2','floor3'].includes(activeTab)" class="p-6 space-y-6">
+                <div class="border p-4 rounded-md space-y-4">
 
+                    <!-- Name -->
+                    <div>
                     <label class="font-semibold">Name</label>
-                    <div v-if="!isEditMode">{{ productStore.getProduct[activeTab].name }}</div>
+                    <div v-if="!isEditMode" class="text-sm p-1 border rounded-md bg-gray-200">{{ productStore.getProduct[activeTab].name }}</div>
+                    
                     <input 
-                    v-else
-                    v-model="productStore.getProduct[activeTab].name"
-                    class="input input-bordered w-full"
+                        v-else
+                        v-model="productStore.getProduct[activeTab].name"
+                        class="input input-bordered w-full text-sm p-1 rounded-md"
                     />
+                    </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                    <!-- Add Image -->
+                    <div 
+                    v-if="isEditMode"
+                    @click="addFloorImg(activeTab)"
+                    class="btn btn-ghost cursor-pointer"
+                    >+ Add Image</div>
+
+                    <!-- Images grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     <div 
                         v-for="(img, idx) in productStore.getProduct[activeTab].image"
                         :key="idx"
+                        class="relative"
                     >
-                        <NuxtImg :src="img" class="rounded shadow" />
+                        <!-- Delete -->
+                        <button 
+                        v-if="isEditMode"
+                        @click="removeFloorImg(activeTab, idx)"
+                        class="p-1 text-white bg-red-500 hover:bg-red-600 transition-colors cursor-pointer rounded-full absolute top-2 right-2 z-10"
+                        ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="size-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                        </svg></button>
+
+                        <NuxtImg :src="img" class="rounded shadow w-full aspect-square object-cover" />
 
                         <input 
                         v-if="isEditMode"
                         v-model="productStore.getProduct[activeTab].image[idx]"
-                        class="input input-bordered w-full mt-2"
+                        class="input input-bordered text-sm w-full mt-2"
+                        placeholder="Image URL"
                         />
                     </div>
                     </div>
@@ -164,9 +246,9 @@
 
                 <main class="flex-1 overflow-y-auto bg-base-100">
                 <!-- Nếu không có dữ liệu -->
-                <!-- <div v-if="!Array.isArray(imagesData) || imagesData.length === 0" class="text-center py-12 text-gray-500">
-                Chưa có ảnh nào.
-                </div> -->
+                <div v-if="!Array.isArray(productStore.product) || imagesData.length === 0" class="text-center py-12 text-gray-500">
+                Chưa có thông tin nào.
+                </div>
                 </main>
                 <ToastMessage
                 ref="toastRef"
@@ -270,6 +352,7 @@
 
 <script setup>
 const productStore = useProductStore();
+const config = useRuntimeConfig();
 const isLoading = ref(false);
 
 //#region Toast
@@ -294,7 +377,15 @@ const showMessageToast = (type, message, url = "") => {
 //#endregion
 
 // ⭐ FORM DATA – dữ liệu dùng để edit
-const formProducts = ref({});
+const formProducts = ref({
+    _id: "",
+    features: [],
+    images: [],
+    blueprint: [],
+    floor1: { name:'TẦNG 01',image: [] },
+    floor2: { name:'TẦNG 02',image: [] },
+    floor3: { name:'TẦNG 03',image: [] },
+});
 
 // ⭐ WATCH productStore.getProduct → khi có dữ liệu mới thì gán vào formProducts
 watch(
@@ -320,26 +411,67 @@ const cancelEdit = () => {
   isEditMode.value = false;
 };
 
+const addFeature = () => {
+  formProducts.value.features.push({ title: '', des: '' })
+}
+const removeFeature = (i) => {
+  formProducts.value.features.splice(i, 1)
+}
+
+const addImage = () => {
+  formProducts.value.images.push('')
+}
+const removeImage = (i) => {
+  formProducts.value.images.splice(i, 1)
+}
+
+const addBlueprint = () => {
+  formProducts.value.blueprint.push({ name: '', image: '' })
+}
+const removeBlueprint = (i) => {
+  formProducts.value.blueprint.splice(i, 1)
+}
+
+const addFloorImg = (floor) => {
+  formProducts.value[floor].image.push('')
+}
+const removeFloorImg = (floor, i) => {
+  formProducts.value[floor].image.splice(i, 1)
+}
+
+
 // Lưu edit
-const saveEdit = () => {
+const saveEdit = async() => {
   isLoading.value = true;
   try {
-    console.log(formProducts.value);
+    const response = await $fetch(`${config.public.apiBase}/products/createorupdate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formProducts.value)
+    });
     showMessageToast("success", "Updated successfully");
     isEditMode.value = false;
-  } catch (e) {
+
+  } catch (error) {
+    console.error('Error fetching products:', error);
     showMessageToast("error", "Save failed");
   } finally {
     isLoading.value = false;
   }
 };
 
-const resetForm = () => {
-  
-};
 </script>
 
 
 <style lang="scss" scoped>
-
+  .scrollable {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .scrollable::-webkit-scrollbar {
+    display: none;
+  }
 </style>
