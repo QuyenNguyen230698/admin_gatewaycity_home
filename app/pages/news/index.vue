@@ -98,6 +98,54 @@
     <div v-if="!Array.isArray(newsData) || newsData.length === 0" class="text-center py-12 text-gray-500">
       Chưa có tin tức nào.
     </div>
+     <!-- Pagination -->
+     <div v-if="totalPages > 0"
+                  class="sticky bottom-0 bg-base-100 border-t border-base-300 px-6 py-3 flex items-center justify-between"
+                >
+                  <!-- Info -->
+                  <div class="text-sm text-gray-500">
+                    Showing
+                    <span class="font-medium">
+                      {{ (currentPage - 1) * pageSize + 1 }}
+                    </span>
+                    -
+                    <span class="font-medium">
+                      {{ Math.min(currentPage * pageSize, totalRecords) }}
+                    </span>
+                    of
+                    <span class="font-medium">{{ totalRecords }}</span>
+                    News And Events
+                  </div>
+
+                  <!-- Controls -->
+                  <div class="flex gap-1">
+                    <button
+                      class="btn btn-xs btn-ghost"
+                      :disabled="currentPage === 1"
+                      @click="prevPage"
+                    >
+                      «
+                    </button>
+
+                    <div
+                      v-for="page in visiblePages"
+                      :key="page"
+                      class="btn btn-xs btn-ghost"
+                      :class="page === currentPage ? 'font-bold btn btn-xs btn-ghost' : ''"
+                      @click="goToPage(page)"
+                    >
+                      {{ page }}
+                    </div>
+
+                    <button
+                      class="btn btn-xs btn-ghost"
+                      :disabled="currentPage === totalPages"
+                      @click="nextPage"
+                    >
+                      »
+                    </button>
+                  </div>
+     </div>
   </div>
       <ToastMessage
       ref="toastRef"
@@ -137,6 +185,42 @@ const showMessageToast = (type, message, url = "") => {
     }
   }
 };
+
+//#region Pagination state
+const currentPage = ref(1)
+const pageSize = ref(10) // số item / trang
+const totalRecords = ref(0)
+const totalPages = computed(() =>
+  Math.ceil(totalRecords.value / pageSize.value)
+)
+
+const goToPage = (page) => {
+  if (page < 1 || page > totalPages.value) return
+  currentPage.value = page
+  fetchDataNews()
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    fetchDataNews()
+  }
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    fetchDataNews()
+  }
+}
+const visiblePages = computed(() => {
+  const range = 2
+  let start = Math.max(1, currentPage.value - range)
+  let end = Math.min(totalPages.value, currentPage.value + range)
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i)
+})
+
+//#endregion
 
 const config = useRuntimeConfig();
 const newsData = ref([])
@@ -200,6 +284,7 @@ const openUpdateDrawer = (item) => {
 }
 
 const refreshNews = () => {
+  currentPage.value = 1
   fetchDataNews()
 }
 
@@ -207,9 +292,14 @@ const fetchDataNews = async () => {
   isLoading.value = true;
   try {
     const response = await $fetch(`${config.public.apiBase}/newandevents/list`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+      method: 'POST',
+      body: {
+        skip: (currentPage.value - 1) * pageSize.value,
+        take: pageSize.value,
+        requiresCounts: true,
+        sorted: [
+          { name: 'createdAt', direction: 'descending' }
+        ]
       }
     });
 
@@ -217,6 +307,8 @@ const fetchDataNews = async () => {
       ? response.result.reverse() 
       : (response.result && Array.isArray(response.result.items) ? response.result.items.reverse() : []);
 
+    newsData.value = response.result || []
+    totalRecords.value = response.count || 0
   } catch (error) {
     console.error('Error fetching news:', error);
     newsData.value = [];
