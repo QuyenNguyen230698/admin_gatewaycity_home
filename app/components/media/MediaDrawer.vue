@@ -142,7 +142,7 @@
                     </button>
 
                     <div
-                      v-for="page in totalPages"
+                      v-for="page in visiblePages"
                       :key="page"
                       class="btn btn-xs btn-ghost"
                       :class="page === currentPage ? 'font-bold btn btn-xs btn-ghost' : ''"
@@ -324,6 +324,13 @@ const prevPage = () => {
     fetchDataImage()
   }
 }
+const visiblePages = computed(() => {
+  const range = 2
+  let start = Math.max(1, currentPage.value - range)
+  let end = Math.min(totalPages.value, currentPage.value + range)
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i)
+})
+
 //#endregion
 
   // Format ngày đẹp
