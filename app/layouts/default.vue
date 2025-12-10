@@ -3,7 +3,7 @@
     <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
 
     <!-- Content -->
-    <div class="drawer-content">
+    <div class="drawer-content overflow-hidden h-full min-h-screen">
       <!-- Navbar -->
       <nav class="navbar w-full bg-base-300">
         <label for="my-drawer-4" class="btn btn-square btn-ghost">

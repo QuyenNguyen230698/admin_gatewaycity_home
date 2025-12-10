@@ -188,7 +188,7 @@ const showMessageToast = (type, message, url = "") => {
 
 //#region Pagination state
 const currentPage = ref(1)
-const pageSize = ref(10) // số item / trang
+const pageSize = ref(3) // số item / trang
 const totalRecords = ref(0)
 const totalPages = computed(() =>
   Math.ceil(totalRecords.value / pageSize.value)
@@ -304,8 +304,8 @@ const fetchDataNews = async () => {
     });
 
     newsData.value = Array.isArray(response.result) 
-      ? response.result.reverse() 
-      : (response.result && Array.isArray(response.result.items) ? response.result.items.reverse() : []);
+      ? response.result
+      : (response.result && Array.isArray(response.result.items) ? response.result.items : []);
 
     newsData.value = response.result || []
     totalRecords.value = response.count || 0
