@@ -111,6 +111,56 @@
                 Chưa có ảnh nào.
                 </div>
                 </main>
+                <!-- Pagination -->
+                <div
+                  v-if="totalPages > 1"
+                  class="sticky bottom-0 bg-base-100 border-t border-base-300 px-6 py-3 flex items-center justify-between"
+                >
+                  <!-- Info -->
+                  <div class="text-sm text-gray-500">
+                    Showing
+                    <span class="font-medium">
+                      {{ (currentPage - 1) * pageSize + 1 }}
+                    </span>
+                    -
+                    <span class="font-medium">
+                      {{ Math.min(currentPage * pageSize, totalRecords) }}
+                    </span>
+                    of
+                    <span class="font-medium">{{ totalRecords }}</span>
+                    images
+                  </div>
+
+                  <!-- Controls -->
+                  <div class="flex gap-1">
+                    <button
+                      class="btn btn-xs btn-ghost"
+                      :disabled="currentPage === 1"
+                      @click="prevPage"
+                    >
+                      «
+                    </button>
+
+                    <div
+                      v-for="page in totalPages"
+                      :key="page"
+                      class="btn btn-xs btn-ghost"
+                      :class="page === currentPage ? 'font-bold btn btn-xs btn-ghost' : ''"
+                      @click="goToPage(page)"
+                    >
+                      {{ page }}
+                    </div>
+
+                    <button
+                      class="btn btn-xs btn-ghost"
+                      :disabled="currentPage === totalPages"
+                      @click="nextPage"
+                    >
+                      »
+                    </button>
+                  </div>
+                </div>
+
                 <ToastMessage
                 ref="toastRef"
                 :typeToast="currentToastType"
@@ -212,6 +262,7 @@
 </template>
 
 <script setup>
+//#region Toast
 const toastRef = ref(null);
 const toastImageRef = ref(null); // Thêm ref cho ToastImage
 const showToast = ref(false);
@@ -237,6 +288,7 @@ const showMessageToast = (type, message, url = "") => {
     }
   }
 };
+//#endregion
 
 const isLoading = ref(true);
 const config = useRuntimeConfig();
@@ -245,6 +297,34 @@ const disabledBtnSubmit = ref(false);
 const selectedFilesDialog = ref([]);
 const isClient = process.client;
 const imagesData = ref([])
+//#region Pagination state
+const currentPage = ref(1)
+const pageSize = ref(10) // số item / trang
+const totalRecords = ref(0)
+const totalPages = computed(() =>
+  Math.ceil(totalRecords.value / pageSize.value)
+)
+
+const goToPage = (page) => {
+  if (page < 1 || page > totalPages.value) return
+  currentPage.value = page
+  fetchDataImage()
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    fetchDataImage()
+  }
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    fetchDataImage()
+  }
+}
+//#endregion
 
   // Format ngày đẹp
 const formatDate = (dateString) => {
@@ -323,30 +403,37 @@ const copyImageUrl = (url) => {
 }
 
 const fetchDataImage = async () => {
-    isLoading.value = true;
+  isLoading.value = true
+
   try {
     const response = await $fetch(`${config.public.apiBase}/cloudinary/list`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+      method: 'POST',
+      body: {
+        skip: (currentPage.value - 1) * pageSize.value,
+        take: pageSize.value,
+        requiresCounts: true,
+        sorted: [
+          { name: 'createdAt', direction: 'descending' }
+        ]
       }
-    });
+    })
 
-    imagesData.value = Array.isArray(response.result) 
-      ? response.result.reverse() 
-      : (response.result && Array.isArray(response.result.items) ? response.result.items.reverse() : []);
+    imagesData.value = response.result || []
+    totalRecords.value = response.count || 0
 
   } catch (error) {
-    console.error('Error fetching images:', error);
-    imagesData.value = [];
+    console.error('Error fetching images:', error)
+    imagesData.value = []
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
 }
 
 const refreshImages = () => {
-  fetchDataImage();
+  currentPage.value = 1
+  fetchDataImage()
 }
+
 
 const submitForm = async () => {
   if (!selectedFilesDialog.value || selectedFilesDialog.value.length === 0) {
@@ -393,6 +480,9 @@ const deleteSingleImage = async (public_id) => {
       method: "DELETE",
       body: JSON.stringify({ public_id }),
     });
+    if (imagesData.value.length === 1 && currentPage.value > 1) {
+      currentPage.value--
+    }
     showMessageToast("success", "Xóa hình ảnh thành công!");
     fetchDataImage();
   } catch (error) {
