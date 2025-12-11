@@ -72,8 +72,9 @@ pinia: {
     // Example of setting cache headers for static files
     prerender: {
       routes: ["/"], // Pre-render the home route
+      failOnError: false     // không dừng build nếu có lỗi nhỏ
     },
-
+    
     routeRules: {
       // Apply caching headers to all routes
       "/**": {
