@@ -9,7 +9,7 @@
       <div class="flex justify-center mb-10">
         <div class="relative">
           <div class="absolute -inset-4 bg-blue-100/30 rounded-full blur"></div>
-          <NuxtImg class="relative h-16 w-16" src="/logo.svg" alt="logo" format="webp" loading="eager" />
+          <NuxtImg class="relative h-16 w-16" src="https://res.cloudinary.com/dpcigceaq/image/upload/v1765281506/Media%20Gateway%20City/iiingth1w5eatij5cju0.svg" alt="logo" format="webp" loading="eager" />
         </div>
       </div>
 

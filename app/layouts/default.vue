@@ -30,7 +30,7 @@
         <!-- Logo -->
         <div class="p-3 border-b border-base-300 text-center">
           <NuxtImg
-            src="/logo.svg"
+            src="https://res.cloudinary.com/dpcigceaq/image/upload/v1765281506/Media%20Gateway%20City/iiingth1w5eatij5cju0.svg"
             alt="Gatewaycity Homes"
             width="120"
             height="120"
