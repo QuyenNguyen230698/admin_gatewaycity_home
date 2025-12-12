@@ -56,7 +56,7 @@
 
                 <!-- Tab  -->
                 <div class="flex px-6 py-3 border-b bg-base-100 w-full overflow-x-auto scrollable">
-                    <div v-for="tab in ['features','images','blueprint','floor1','floor2','floor3']"
+                    <div v-for="tab in ['features','images','blueprint','floor1','floor2','floor3','floor4']"
                         :key="tab"
                         @click="activeTab = tab"
                         class="btn"
