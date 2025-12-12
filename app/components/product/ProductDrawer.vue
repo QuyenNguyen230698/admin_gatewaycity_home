@@ -190,7 +190,7 @@
                 </div>
 
                 <!-- ⭐ FLOOR1 / FLOOR2 / FLOOR3 (OBJECT) -->
-                <div v-if="['floor1','floor2','floor3'].includes(activeTab)" class="p-6 space-y-6">
+                <div v-if="['floor1','floor2','floor3','floor4'].includes(activeTab)" class="p-6 space-y-6">
                 <div class="border p-4 rounded-md space-y-4">
 
                     <!-- Name -->
@@ -385,6 +385,7 @@ const formProducts = ref({
     floor1: { name:'TẦNG 01',image: [] },
     floor2: { name:'TẦNG 02',image: [] },
     floor3: { name:'TẦNG 03',image: [] },
+    floor4: { name:'TẦNG 04',image: [] }
 });
 
 // ⭐ WATCH productStore.getProduct → khi có dữ liệu mới thì gán vào formProducts
