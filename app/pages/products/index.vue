@@ -238,8 +238,8 @@ const fetchDataProducts = async () => {
     });
 
     productsData.value = Array.isArray(response.result) 
-      ? response.result.reverse() 
-      : (response.result && Array.isArray(response.result.items) ? response.result.items.reverse() : []);
+      ? response.result
+      : (response.result && Array.isArray(response.result.items) ? response.result.items : []);
 
   } catch (error) {
     console.error('Error fetching products:', error);

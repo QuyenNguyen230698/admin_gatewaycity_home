@@ -32,7 +32,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in newsData" :key="item._id" class="hover:bg-base-200 transition">
+        <tr v-for="item in newsData" :key="item._id" class="hover:bg-base-200 transition h-40">
           <!-- Cột 1: Dropdown 3 chấm -->
           <td class="text-center">
             <div class="dropdown dropdown-bottom dropdown-start">
@@ -42,10 +42,10 @@
                 </svg>
               </label>
               <div class="flex flex-col dropdown-content menu z-20 w-24 bg-base-300 p-1 shadow rounded">
-                <button @click="openUpdateDrawer(item)" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Update</button>
-                <button @click="statusUpdate(item._id, 'published')" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Published</button>
-                <button @click="statusUpdate(item._id, 'drafted')" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Draft</button>
-                <button @click="deleteNews(item._id)" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Delete</button>
+                <button @click="openUpdateDrawer(item)" class="hover:bg-stone-300 cursor-pointer py-0.5 px-3">Update</button>
+                <button @click="deleteNews(item._id)" class="hover:bg-stone-300 cursor-pointer py-0.5 px-3">Delete</button>
+                <button @click="statusUpdate(item._id, 'published')" class="hover:bg-stone-300 cursor-pointer py-0.5 px-3">Published</button>
+                <button @click="statusUpdate(item._id, 'drafted')" class="hover:bg-stone-300  py-0.5 px-3">Draft</button>
               </div>
             </div>
           </td>
@@ -369,5 +369,12 @@ onMounted( async () => {
 </script>
 
 <style scoped>
+.dropdown .dropdown-content {
+  pointer-events: none;
+}
 
+.dropdown.dropdown-open .dropdown-content,
+.dropdown:focus-within .dropdown-content {
+  pointer-events: auto;
+}
 </style>
