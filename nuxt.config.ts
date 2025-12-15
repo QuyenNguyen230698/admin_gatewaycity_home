@@ -8,13 +8,52 @@ export default defineNuxtConfig({
   devServer: {
     port: 7878,
   },
-
   app: {
     head: {
       htmlAttrs: {
         'data-theme': 'light'
-      }
-    }
+      },
+      bodyAttrs: {
+        class: "h-full",
+      },
+      title: "Admin Gateway City",
+      link: [
+        { rel: "icon", type: "image/x-icon", href: "/Logo.svg" },
+        { rel: "apple-touch-icon", sizes: "180x180", href: "/Logo.svg" },
+        { rel: "icon", type: "image/png", sizes: "32x32", href: "/Logo.svg" },
+        { rel: "icon", type: "image/png", sizes: "16x16", href: "/Logo.svg" },
+        { rel: "manifest", href: "/site.webmanifest" },
+      ],
+      meta: [
+        { charset: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { "http-equiv": "X-UA-Compatible", content: "IE=edge" },
+        { name: "description", content: "Admin Gateway City" },
+        { name: "keywords", content: "Admin Gateway City, Gatewaycity, Homes" },
+        { name: "author", content: "Admin Gateway City" },
+        { name: "robots", content: "index, follow" },
+        { name: "theme-color", content: "#FFFFFF" },
+        { name: "mobile-web-app-capable", content: "yes" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+        { name: "apple-mobile-web-app-title", content: "Admin Gateway City" },
+        { property: "og:title", content: "Admin Gateway City" },
+        { property: "og:description", content: "Admin Gateway City" },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: `https://gatewaycityhomes.com` },
+        {
+          property: "og:image",
+          content: ``,
+        },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:site", content: "@gatewaycityhomes" },
+        { name: "twitter:title", content: "Admin Gateway City" },
+        { name: "twitter:description", content: "Admin Gateway City" },
+        {
+          name: "twitter:image",
+          content: ``,
+        },
+      ],
+    },
   },
 
   vite: {
