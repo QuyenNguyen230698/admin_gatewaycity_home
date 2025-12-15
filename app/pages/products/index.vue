@@ -260,5 +260,12 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.dropdown .dropdown-content {
+  pointer-events: none;
+}
 
+.dropdown.dropdown-open .dropdown-content,
+.dropdown:focus-within .dropdown-content {
+  pointer-events: auto;
+}
 </style>
