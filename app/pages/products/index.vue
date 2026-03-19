@@ -1,225 +1,107 @@
 <template>
-  <div class="overflow-x-auto bg-base-100 h-full relative">
-    <div v-if="isLoading" class="flex justify-center items-center h-full w-full absolute inset-0 z-50 bg-black/50">
-        <span class="loading loading-spinner loading-lg text-white"></span>
-    </div>
-    <div class="flex items-center gap-4 px-6 py-2 border-b border-base-200">
-        <!-- <label for="productGrid" class="cursor-pointer flex gap-2 btn btn-ghost">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
+  <div class="h-full flex flex-col space-y-6 animate-fade-in text-slate-900 dark:text-slate-100">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
-          <span>Create Product</span>
-        </label> -->
-      <div @click="refreshProducts" class="cursor-pointer flex gap-2 btn btn-ghost">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-        </svg>
-        <span>Refresh</span>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold">Real Estate Products</h2>
+          <p class="text-sm text-slate-500">Manage property listings and building blueprints</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button @click="refreshProducts" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95 shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" :class="['w-4 h-4', isLoading ? 'animate-spin' : '']" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span>Refresh</span>
+        </button>
       </div>
     </div>
 
-    <table class="table table-zebra w-full">
-      <thead>
-        <tr class="bg-base-200 text-left text-xs uppercase">
-          <th class="w-20 text-center border-r">Action</th>
-          <th class="w-72 border-r">Banner</th>
-          <th class="w-72 border-r">Title</th>
-          <th class="w-72 border-r">Slug</th>
-          <th class="w-72">Created At</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in productsData" :key="item._id" class="hover:bg-base-200 transition">
-          <!-- Cột 1: Dropdown 3 chấm -->
-          <td class="text-center">
-            <div class="dropdown dropdown-bottom dropdown-start">
-              <label tabindex="0" class="btn btn-ghost btn-md">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+    <!-- Inventory Grid/Table -->
+    <div class="flex-1 min-h-0 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+       <div class="overflow-x-auto flex-1 custom-scrollbar">
+          <table class="w-full text-left border-collapse">
+            <thead class="sticky top-0 z-10 bg-slate-50 dark:bg-slate-800/80 backdrop-blur-md">
+              <tr>
+                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800 w-20 text-center">Action</th>
+                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Preview</th>
+                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Property Title</th>
+                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Slug</th>
+                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Created At</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+              <tr v-for="item in productsData" :key="item._id" class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors h-24">
+                <td class="px-6 py-4 text-center">
+                   <button @click="openUpdateDrawer(item)" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-primary-500 hover:text-white transition-all text-slate-500">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                     </svg>
+                   </button>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="w-32 h-20 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 bg-slate-100">
+                    <img :src="item.images[0]" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                   <div class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ item.title }}</div>
+                   <div class="text-[10px] text-primary-500 font-bold mt-1 uppercase">Active Project</div>
+                </td>
+                <td class="px-6 py-4 font-mono text-xs text-slate-400 break-all max-w-xs">{{ item.slug }}</td>
+                <td class="px-6 py-4 text-xs text-slate-400">{{ formatDate(item.createdAt) }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Empty State -->
+          <div v-if="!isLoading && (!productsData || productsData.length === 0)" class="flex flex-col items-center justify-center py-24 text-center">
+             <div class="w-20 h-20 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-200 mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
-              </label>
-              <div class="flex flex-col dropdown-content menu z-20 w-24 bg-base-300 p-1 shadow rounded">
-                <label for="productGrid" @click="openUpdateDrawer(item)" class="hover:bg-stone-300 cursor-pointer py-1 px-3">Update</label>
-              </div>
-            </div>
-          </td>
-
-          <!-- Cột 2: Hình ảnh (200px)-->
-          <td>
-            <div class="w-52 overflow-hidden">
-              <img :src="item.images[0]" :alt="item.title" class="object-cover w-full h-28" />
-            </div>
-          </td>
-
-          <!-- Cột 3: Title -->
-          <td class="text-xs max-w-xs truncate">{{ item.title }}</td>
-
-          <!-- Cột 4: Slug -->
-          <td class="font-mono text-xs text-base-content/70 break-all max-w-xs truncate">
-            {{ item.slug }}
-          </td>
-
-          <!-- Cột 5: Created At -->
-          <td class="text-xs text-nowrap">
-            {{ formatDate(item.createdAt) }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- Nếu không có dữ liệu -->
-    <div v-if="!Array.isArray(productsData) || productsData.length === 0" class="text-center py-12 text-gray-500">
-      Chưa có Sản Phẩm nào.
+             </div>
+             <h3 class="text-lg font-bold">No products available</h3>
+             <p class="text-slate-500 text-sm mt-2">Initialize your property catalog to start managing.</p>
+          </div>
+       </div>
     </div>
+
+    <!-- Spinner Loading -->
+    <Teleport to="body">
+       <div v-if="isLoading" class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/10 backdrop-blur-[2px]">
+          <div class="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+       </div>
+    </Teleport>
+
     <ProductDrawer />
+    <ToastMessage ref="toastRef" :typeToast="currentToastType" :message="toastMessage" :show="showToast" :width="`w-2/3 lg:w-fit`" class="z-40" />
   </div>
-      <ToastMessage
-      ref="toastRef"
-      :typeToast="currentToastType"
-      :message="toastMessage"
-      :show="showToast"
-      :width="`w-2/3 lg:w-fit`"
-      class="z-40"
-    />
 </template>
 
 <script setup>
 const productStore = useProductStore();
 const config = useRuntimeConfig();
-//#region QuyenNC ( toast )
+
 const toastRef = ref(null);
-const toastImageRef = ref(null); // Thêm ref cho ToastImage
 const showToast = ref(false);
-const showToastImage = ref(false); // Thêm biến để điều khiển hiển thị của ToastImage
 const currentToastType = ref("");
 const toastMessage = ref("");
-const toastImageUrl = ref(""); // Thêm biến để lưu URL cho ToastImage
-const showMessageToast = (type, message, url = "") => {
-  currentToastType.value = type;
-  toastMessage.value = message;
-  showToast.value = !url; // Chỉ hiển thị Toast nếu không có URL
-  showToastImage.value = !!url; // Hiển thị ToastImage nếu có URL
-  toastImageUrl.value = url; // Gán URL cho ToastImage
-
-  if (url !== "") {
-    if (toastImageRef.value) {
-      // Hiển thị ToastImage khi showMessageToast được gọi
-      toastImageRef.value.show();
-    }
-  } else {
-    if (toastRef.value) {
-      toastRef.value.show();
-    }
-  }
-};
-//#endregion
 
 const isLoading = ref(false)
-const productsData = ref([    
-    // {
-    //     _id: '1',
-    //     slug: 'biet-thu-don-lap',
-    //     title: 'Biệt Thự Đơn Lập',
-    //     features: [
-    //         {title: 'TỔNG DIỆN TÍCH ĐẤT', des: '188m2 - 238m2'},
-    //         {title: 'TỔNG DIỆN TÍCH SÀN SỬ DỤNG (*)', des: '340m2 - 360m2'},
-    //         {title: 'SỐ TẦNG', des: '1 Trệt, 2 Lầu'},
-    //         {title: 'SỐ PHÒNG', des: '4 Phòng Ngủ - 5 WC'},
-    //     ],
-    //     images: [
-    //         '/image/sanpham/bietthudonlap/banner-donlap.png',
-    //         '/image/sanpham/bietthudonlap/banner-donlap.png',
-    //         '/image/sanpham/bietthudonlap/banner-donlap.png'
-    //     ],
-    //     blueprint: [
-    //         {name:'VỊ TRÍ', image:'/image/sanpham/bietthudonlap/Vi-tri-don-lap.jpg'},
-    //         {name:'TẦNG 01', image:'/image/sanpham/bietthudonlap/Tang-1-don-lap.png'},
-    //         {name:'TẦNG 02', image:'/image/sanpham/bietthudonlap/Tang-2-don-lap.png'},
-    //         {name:'TẦNG 03', image:'/image/sanpham/bietthudonlap/Tang-3-don-lap.png'},
-    //     ],
-    //     floor1: {
-    //         name: 'TẦNG 01',
-    //         image: [
-    //             '/image/sanpham/bietthudonlap/Tang1/T1_PHONG-BEP-3-of-4.jpg',
-    //             '/image/sanpham/bietthudonlap/Tang1/T1_PHONG-BEP-4-of-4.jpg',
-    //             '/image/sanpham/bietthudonlap/Tang1/T1_PHONG-KHACH-1-of-5.jpeg',
-    //             '/image/sanpham/bietthudonlap/Tang1/T1_PHONG-KHACH-3-of-5.jpg',
-    //             '/image/sanpham/bietthudonlap/Tang1/T1_PHONG-NGU-01-1-of-4.jpg',
-    //         ]
-    //     },
-    //     floor2: {
-    //         name: 'TẦNG 02',
-    //         image: [
-    //             '/image/sanpham/bietthudonlap/Tang2/T2_PHONG-NGU-02-1-of-4.jpg',
-    //             '/image/sanpham/bietthudonlap/Tang2/T2_PHONG-NGU-03-1-of-4.jpg',
-    //             '/image/sanpham/bietthudonlap/Tang2/T2_PHONG-NGU-MASTER-1-of-4.jpg',
-    //             '/image/sanpham/bietthudonlap/Tang2/T2_PHONG-THAY-DO-2-of-2.jpg',
-    //             '/image/sanpham/bietthudonlap/Tang2/tang-2_wc-2.jpg',
-    //         ]
-    //     },
-    //     floor3: {
-    //         name: 'TẦNG 03',
-    //         image: [
-    //             '/image/sanpham/bietthudonlap/Tang3/tang-3_ktv-2-of-2.jpg',
-    //             '/image/sanpham/bietthudonlap/Tang3/tang-3_phong-ngu-1-of-2.jpg',
-    //             '/image/sanpham/bietthudonlap/Tang3/tang-3_phong-tho-1-of-2.jpg',
-    //         ]
-    //     },
-    //     floor4: { name: 'TẦNG 04', image: []}
-    // },
-    // {
-    //     _id: '2',
-    //     slug: 'biet-thu-song-lap',
-    //     title: 'Biệt Thự Song Lập',
-    //     features: [
-    //     {title: 'TỔNG DIỆN TÍCH ĐẤT', des: '200m2 - 300m2'},
-    //     {title: 'TỔNG DIỆN TÍCH SÀN SỬ DỤNG (*)', des: '400m2 - 450m2'},
-    //     {title: 'SỐ TẦNG', des: '1 Trệt, 2 Lầu'},
-    //     {title: 'SỐ PHÒNG', des: '4 Phòng Ngủ - 5 WC'},
-    //     ],
-    //     images: [
-    //         '/image/gatewaycity/biet-thu-song-lap.jpg',
-    //         '/image/gatewaycity/biet-thu-song-lap.jpg',
-    //         '/image/gatewaycity/biet-thu-song-lap.jpg'
-    //     ],
-    //     blueprint: [],
-    //     floor1: { name: 'TẦNG 01', image: []},
-    //     floor2: { name: 'TẦNG 02', image: []},
-    //     floor3: { name: 'TẦNG 03', image: []},
-    //     floor4: { name: 'TẦNG 04', image: []}
-    // },
-    // {
-    //     _id: '3',
-    //     slug: 'nha-pho-thuong-mai',
-    //     title: 'Nhà Phố Thương Mại',
-    //     features: [
-    //         {title: 'TỔNG DIỆN TÍCH ĐẤT', des: '188m2 - 238m2'},
-    //         {title: 'TỔNG DIỆN TÍCH SÀN SỬ DỤNG (*)', des: '340m2 - 360m2'},
-    //         {title: 'SỐ TẦNG', des: '1 Trệt, 2 Lầu'},
-    //         {title: 'SỐ PHÒNG', des: '4 Phòng Ngủ - 5 WC'},
-    //     ],
-    //     images: [
-    //         '/image/gatewaycity/thanh-pho-thuong-mai.jpg',
-    //         '/image/gatewaycity/thanh-pho-thuong-mai.jpg',
-    //         '/image/gatewaycity/thanh-pho-thuong-mai.jpg'
-    //     ],
-    //     blueprint: [],
-    //     floor1: { name: 'TẦNG 01', image: []},
-    //     floor2: { name: 'TẦNG 02', image: []},
-    //     floor3: { name: 'TẦNG 03', image: []},
-    //     floor4: { name: 'TẦNG 04', image: []}
-    // }
-])
+const productsData = ref([])
 
-// Format ngày đẹp
 const formatDate = (dateString) => {
   const date = new Date(dateString)
   return date.toLocaleDateString('vi-VN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
   })
 }
 
@@ -230,17 +112,8 @@ const openUpdateDrawer = (item) => {
 const fetchDataProducts = async () => {
   isLoading.value = true;
   try {
-    const response = await $fetch(`${config.public.apiBase}/products/list`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-
-    productsData.value = Array.isArray(response.result) 
-      ? response.result
-      : (response.result && Array.isArray(response.result.items) ? response.result.items : []);
-
+    const response = await $fetch(`${config.public.apiBase}/products/list`);
+    productsData.value = response.result || []
   } catch (error) {
     console.error('Error fetching products:', error);
     productsData.value = [];
@@ -256,16 +129,11 @@ const refreshProducts = () => {
 onMounted(() => {
   fetchDataProducts()
 })
-
 </script>
 
-<style lang="scss" scoped>
-.dropdown .dropdown-content {
-  pointer-events: none;
-}
-
-.dropdown.dropdown-open .dropdown-content,
-.dropdown:focus-within .dropdown-content {
-  pointer-events: auto;
-}
+<style scoped>
+.custom-scrollbar::-webkit-scrollbar { width: 5px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
 </style>

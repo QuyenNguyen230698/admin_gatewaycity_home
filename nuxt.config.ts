@@ -1,4 +1,5 @@
 import { compression } from "vite-plugin-compression2";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -14,7 +15,7 @@ export default defineNuxtConfig({
         'data-theme': 'light'
       },
       bodyAttrs: {
-        class: "h-full",
+        class: "h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100",
       },
       title: "Admin Gateway City",
       link: [
@@ -57,7 +58,10 @@ export default defineNuxtConfig({
   },
 
   vite: {
-    plugins: [compression()],
+    plugins: [
+      compression(),
+      tailwindcss(),
+    ],
   },
 
   // TRỎ ĐÚNG ĐƯỜNG DẪN CSS
@@ -68,42 +72,11 @@ export default defineNuxtConfig({
   modules: [
     "@pinia/nuxt",
     "@nuxt/image",
-    "@nuxt/fonts",
-    "@nuxtjs/tailwindcss"
+    "@nuxt/fonts"
   ],
 
-pinia: {
+  pinia: {
     storesDirs: ['./stores/**'],   // Nuxt 4 khuyến khích dùng stores/ thay vì store/
-  },
-    postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
-      "@fullhuman/postcss-purgecss": {
-        content: [
-          "./components/**/*.{vue,js}",
-          "./layouts/**/*.vue",
-          "./pages/**/*.vue",
-          "./plugins/**/*.{js,ts}",
-          "./app.vue",
-          "./error.vue",
-          "./nuxt.config.{js,ts}",
-          "./index.html",
-          "./src/**/*.{vue,js,ts,jsx,tsx}",
-        ],
-        safelist: [
-          "aos-init",
-          "aos-animate",
-          /^aos-/,
-          /^data-aos-/,
-          /^data-aos/,
-          /^v3dp__/,
-          /^e-/,
-        ],
-        defaultExtractor: (content: string) =>
-          content.match(/[\w-/:]+(?<!:)/g) || [],
-      },
-    },
   },
 
   nitro: {

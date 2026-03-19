@@ -1,132 +1,158 @@
 <template>
-  <div class="drawer lg:drawer-open h-full min-h-screen overflow-hidden">
-    <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
-
-    <!-- Content -->
-    <div class="drawer-content overflow-hidden h-full min-h-screen">
-      <!-- Navbar -->
-      <nav class="navbar w-full bg-base-300">
-        <label for="my-drawer-4" class="btn btn-square btn-ghost">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-            stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5"
-            fill="none" stroke="currentColor" class="my-1.5 inline-block size-5">
-            <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-12a2 2 0 0 1-2 -2z" />
-            <path d="M9 4v16" />
-            <path d="M14 10l2 2l-2 2" />
+  <div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 font-sans">
+    
+    <!-- Modern Sidebar -->
+    <aside 
+      :class="[
+        'relative flex flex-col transition-all duration-300 ease-in-out border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 z-30',
+        isSidebarExpanded ? 'w-72' : 'w-20'
+      ]"
+    >
+      <!-- Logo Section -->
+      <div class="flex items-center justify-between h-16 px-4 border-b border-slate-100 dark:border-slate-800/50">
+        <div class="flex items-center gap-3 overflow-hidden">
+          <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-primary-500 shadow-lg shadow-primary-500/20">
+            <NuxtImg
+              src="https://res.cloudinary.com/dpcigceaq/image/upload/v1765281506/Media%20Gateway%20City/iiingth1w5eatij5cju0.svg"
+              alt="Logo"
+              width="24"
+              height="24"
+              class="brightness-0 invert"
+            />
+          </div>
+          <span v-if="isSidebarExpanded" class="font-bold text-lg tracking-tight whitespace-nowrap animate-fade-in text-slate-800 dark:text-slate-100">
+            Gateway City
+          </span>
+        </div>
+        <!-- <button 
+          @click="toggleSidebar" 
+          class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors"
+        >
+          <svg v-if="isSidebarExpanded" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
           </svg>
-        </label>
-        <div class="px-4 font-semibold">{{ pageTitle }}</div>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+          </svg>
+        </button> -->
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollable">
+        <div v-for="item in navItems" :key="item.path">
+          <NuxtLink 
+            :to="item.path"
+            class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200"
+            :class="[
+              route.path.startsWith(item.path) 
+                ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-medium' 
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100'
+            ]"
+          >
+            <div 
+              class="flex-shrink-0"
+              :class="route.path.startsWith(item.path) ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'"
+              v-html="item.icon"
+            ></div>
+            <span v-if="isSidebarExpanded" class="whitespace-nowrap animate-fade-in text-sm font-medium tracking-wide">
+              {{ item.label }}
+            </span>
+            <div v-if="!isSidebarExpanded" class="absolute left-16 px-2 py-1 ml-4 text-xs font-semibold text-white bg-slate-900 rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
+              {{ item.label }}
+            </div>
+          </NuxtLink>
+        </div>
       </nav>
 
-      <div class="w-full h-full">
-        <slot />
+      <!-- User Profile & Settings -->
+      <div class="p-4 border-t border-slate-100 dark:border-slate-800/50">
+        <div class="flex items-center gap-3" :class="isSidebarExpanded ? '' : 'justify-center'">
+          <div v-if="isSidebarExpanded" class="flex flex-col min-w-0 flex-1">
+            <span class="text-sm font-semibold truncate dark:text-slate-200">{{ user?.email || 'Admin' }}</span>
+            <span class="text-xs text-slate-500 truncate uppercase">{{ user?.roles || 'Super Admin' }}</span>
+          </div>
+          <button 
+            @click="openLogoutModal" 
+            class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-400 hover:text-red-600 transition-colors"
+            title="Logout"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </button>
+        </div>
       </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <!-- Top Header -->
+      <header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-20">
+        <div class="flex items-center gap-4">
+          <button 
+            @click="toggleSidebar" 
+            class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors"
+          >
+            <svg v-if="isSidebarExpanded" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+          </button>
+          <h1 class="text-xl font-bold text-slate-800 dark:text-slate-100">
+            {{ pageTitle }}
+          </h1>
+        </div>
+        
+        <div class="flex items-center gap-4">
+          <!-- Quick Search -->
+          <div class="hidden md:flex items-center px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500/50 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" placeholder="Search..." class="ml-2 bg-transparent border-none outline-none text-sm text-slate-700 dark:text-slate-300 w-48" />
+          </div>
+
+          <!-- Theme Toggle -->
+          <button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Slot Area -->
+      <main class="flex-1 overflow-auto p-6 bg-slate-50 dark:bg-slate-950 custom-scrollbar">
+        <div class="max-w-7xl mx-auto h-full animate-fade-in">
+          <slot />
+        </div>
+      </main>
     </div>
 
-    <!-- Sidebar -->
-    <div class="drawer-side is-drawer-close:overflow-visible">
-      <label for="my-drawer-4" class="drawer-overlay"></label>
-      <div class="flex min-h-full flex-col bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
-        <!-- Logo -->
-        <div class="p-3 border-b border-base-300 text-center">
-          <NuxtImg
-            src="https://res.cloudinary.com/dpcigceaq/image/upload/v1765281506/Media%20Gateway%20City/iiingth1w5eatij5cju0.svg"
-            alt="Gatewaycity Homes"
-            width="120"
-            height="120"
-            class="mx-auto"
-          />
-        </div>
-        <ul class="menu w-full grow">
-          <li>
-            <NuxtLink external
-              href="/news"
-              class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="my-1.5 inline-block size-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
+    <!-- Modals -->
+    <Teleport to="body">
+      <div v-if="showLogoutModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-sm bg-black/40 animate-fade-in">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-sm p-6 animate-scale-in border border-slate-200 dark:border-slate-800">
+          <div class="flex flex-col items-center text-center gap-4">
+            <div class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
-              <span class="is-drawer-close:hidden">News</span>
-            </NuxtLink>
-          </li>
-
-          <li>
-            <NuxtLink external
-              href="/products"
-              class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="my-1.5 inline-block size-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-              </svg>
-              <span class="is-drawer-close:hidden">Products</span>
-            </NuxtLink>
-          </li>
-
-          <li>
-            <NuxtLink
-              href="/contents"
-              class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-            >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="my-1.5 inline-block size-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-            </svg>
-              <span class="is-drawer-close:hidden">Contents</span>
-            </NuxtLink>
-          </li>
-
-          <li>
-            <NuxtLink
-              href="/guest-data"
-              class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-            >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="my-1.5 inline-block size-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-            </svg>
-              <span class="is-drawer-close:hidden">Data Guest</span>
-            </NuxtLink>
-          </li>
-
-        </ul>
-        <!-- Logout -->
-        <div class="p-2 border-t border-base-300">
-          <div class="flex items-center justify-between p-2">
-            <div class="flex flex-col gap-1">
-              <span class="font-bold text-xs is-drawer-close:hidden">{{ user?.email }}</span>
-              <span class="text-xs is-drawer-close:hidden">{{ user?.roles }}</span>
             </div>
-            <button @click="openLogoutModal" class="btn btn-sm px-2 tooltip tooltip-right">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-              </svg>
-            </button>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">Sign Out</h3>
+              <p class="text-sm text-slate-500 mt-1">Are you sure you want to sign out?</p>
+            </div>
+            <div class="flex gap-3 w-full mt-2">
+              <button @click="showLogoutModal = false" class="flex-1 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">Cancel</button>
+              <button @click="logout" class="flex-1 px-4 py-2 rounded-xl bg-red-600 text-white shadow-lg shadow-red-600/20">Logout</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <div v-if="showLogoutModal" class="fixed inset-0 flex items-center justify-center p-6 z-50">
-          <div class="bg-white p-8 rounded-lg max-w-md w-full shadow-2xl">
-              <div class="flex flex-col gap-4">
-                  <h6 class="text-xl font-semibold text-red-600 flex items-center gap-3 border-b border-base-300">
-                      Logout
-                  </h6>
-                  <div class="flex justify-end gap-3">
-                      <button 
-                          @click="logout()"
-                          class="flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 focus:ring-2 focus:ring-red-300 transition-all duration-200"
-                      >
-                          Logout
-                      </button>
-                      <button 
-                          @click="showLogoutModal = false" 
-                          class="flex items-center gap-2 px-4 py-2 bg-slate-200 text-black text-sm font-medium rounded hover:bg-slate-300 focus:ring-2 focus:ring-slate-100 transition-all duration-200"
-                      >
-                          Close
-                      </button>
-                  </div>
-              </div>
-          </div>
-      </div>
+    </Teleport>
 
     <GeneralDrawer ref="drawerRef" />
   </div>
@@ -134,68 +160,47 @@
 
 <script setup>
 const route = useRoute()
-
-// State lưu user cho UI, nhưng không tự redirect
-const user = ref({
-  email: '',
-  roles: ''
-})
-
+const isSidebarExpanded = ref(true)
 const showLogoutModal = ref(false)
 
-// Tự động đổi tiêu đề theo route
+const user = ref({ email: '', roles: '' })
+
+const navItems = [
+  { path: '/news', label: 'News & Media', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>' },
+  { path: '/products', label: 'Products', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>' },
+  { path: '/contents', label: 'Editor', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>' },
+  { path: '/guest-data', label: 'Guests', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>' }
+]
+
 const pageTitle = computed(() => {
-  const path = route.path
-
-  if (path.includes('/news')) return 'News (Tin tức)'
-  if (path.includes('/products')) return 'Products (Sản phẩm)'
-  if (path.includes('/contents')) return 'Create Contents (Tạo nội dung)'
-  if (path.includes('/guest-data')) return 'Guest Data (Khách hàng đăng ký)'
-
-  return 'Admin Gatewaycity Homes'
+  const currentNav = navItems.find(item => route.path.startsWith(item.path))
+  return currentNav ? currentNav.label : 'Admin Dashboard'
 })
 
-const drawerRef = ref(null)
-
-// Logout chỉ xóa session, redirect để guard xử lý
+const toggleSidebar = () => { isSidebarExpanded.value = !isSidebarExpanded.value }
+const openLogoutModal = () => { showLogoutModal.value = true }
 const logout = () => {
-  if (process.client) {
-    localStorage.removeItem('loginSession')
-  }
+  if (process.client) localStorage.removeItem('loginSession')
   navigateTo('/login')
 }
 
 onMounted(() => {
   if (!process.client) return
-
   const session = localStorage.getItem('loginSession')
   if (!session) return navigateTo('/login')
-
-  let data = null
   try {
-    data = JSON.parse(session)
-  } catch (e) {
-    return navigateTo('/login')
-  }
-
-  if (!data.user) return navigateTo('/login')
-
-  user.value.email = data.user.email || ''
-  user.value.roles = data.user.roles || ''
+    const data = JSON.parse(session)
+    if (data.user) {
+      user.value.email = data.user.email || ''
+      user.value.roles = data.user.roles || ''
+    } else navigateTo('/login')
+  } catch (e) { navigateTo('/login') }
 })
-
-
-const openLogoutModal = () => {
-  showLogoutModal.value = true
-}
 </script>
 
-
 <style scoped>
-/* Khi sidebar thu gọn (mobile), ẩn chữ, chỉ hiện icon + tooltip */
-@media (max-width: 1023px) {
-  .hidden-lg\:inline {
-    display: none !important;
-  }
-}
+.custom-scrollbar::-webkit-scrollbar { width: 5px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
 </style>

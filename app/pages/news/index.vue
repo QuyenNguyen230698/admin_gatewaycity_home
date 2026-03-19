@@ -1,198 +1,181 @@
 <template>
-  <div class="overflow-x-auto bg-base-100 h-full relative">
-    <div v-if="isLoading" class="flex justify-center items-center h-full w-full absolute inset-0 z-50 bg-black/50">
-        <span class="loading loading-spinner loading-lg text-white"></span>
-    </div>
-    <div class="flex items-center gap-4 px-6 py-2 border-b border-base-200">
-      <div @click="openEditDrawer" class="cursor-pointer flex gap-2 btn btn-ghost">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-        </svg>
-        <span>Create News</span>
+  <div class="h-full flex flex-col space-y-4 animate-fade-in text-slate-900 dark:text-slate-100">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-orange-50 dark:bg-orange-900/20 text-orange-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold">News & Media</h2>
+          <p class="text-sm text-slate-500">Create and manage your articles and events</p>
+        </div>
       </div>
-      <div @click="refreshNews" class="cursor-pointer flex gap-2 btn btn-ghost">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-        </svg>
-        <span>Refresh</span>
+
+      <div class="flex items-center gap-3">
+        <button @click="refreshNews" class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-50 transition-all active:scale-95 shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" :class="['w-5 h-5', isLoading ? 'animate-spin' : '']" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+        <button @click="openEditDrawer" class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary-600 text-white font-bold hover:bg-primary-700 shadow-lg shadow-primary-600/20 transition-all active:scale-95">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          <span>Create News</span>
+        </button>
       </div>
     </div>
 
-    <table class="table table-zebra w-full">
-      <thead>
-        <tr class="bg-base-200 text-left text-xs uppercase">
-          <th class="w-20 text-center border-r">Action</th>
-          <th class="w-72 border-r">Banner</th>
-          <th class="w-72 border-r">Title</th>
-          <th class="w-72 border-r">Description</th>
-          <th class="w-36 text-center border-r">Status</th>
-          <th class="w-36 text-center border-r">Type</th>
-          <th class="w-72 border-r">Slug</th>
-          <th class="w-72">Created At</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in newsData" :key="item._id" class="hover:bg-base-200 transition h-40">
-          <!-- Cột 1: Dropdown 3 chấm -->
-          <td class="text-center">
-            <div class="dropdown dropdown-bottom dropdown-start">
-              <label tabindex="0" class="btn btn-ghost btn-md">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                </svg>
-              </label>
-              <div class="flex flex-col dropdown-content menu z-20 w-24 bg-base-300 p-1 shadow rounded">
-                <button @click="openUpdateDrawer(item)" class="hover:bg-stone-300 cursor-pointer py-0.5 px-3">Update</button>
-                <button @click="deleteNews(item._id)" class="hover:bg-stone-300 cursor-pointer py-0.5 px-3">Delete</button>
-                <button @click="statusUpdate(item._id, 'published')" class="hover:bg-stone-300 cursor-pointer py-0.5 px-3">Published</button>
-                <button @click="statusUpdate(item._id, 'drafted')" class="hover:bg-stone-300  py-0.5 px-3">Draft</button>
-              </div>
-            </div>
-          </td>
-
-          <!-- Cột 2: Hình ảnh (200px)-->
-          <td>
-            <div class="w-52 overflow-hidden">
-              <img :src="item.src" :alt="item.title" class="object-cover w-full h-28" />
-            </div>
-          </td>
-
-          <!-- Cột 3: Title -->
-          <td class="text-xs max-w-xs truncate">{{ item.title }}</td>
-
-          <!-- Cột 4: Description -->
-          <td class="text-xs text-base-content/80 truncate max-w-xs">{{ item.description }}</td>
-
-          <!-- Cột 5: Status -->
-          <td class="text-center">
-            <div class="badge badge-xs" :class="{
-              'badge-success': item.status === 'published',
-              'badge-warning': item.status === 'drafted',
-              'badge-error': item.status === 'archived'
-            }">
-              {{ item.status.toUpperCase() }}
-            </div>
-          </td>
-
-          <!-- Cột 6: Type -->
-          <td class="text-center">
-            <div class="badge badge-outline badge-info badge-xs">
-              {{ item.type }}
-            </div>
-          </td>
-
-          <!-- Cột 7: Slug -->
-          <td class="font-mono text-xs text-base-content/70 break-all max-w-xs truncate">
-            {{ item.slug }}
-          </td>
-
-          <!-- Cột 8: Created At -->
-          <td class="text-xs text-nowrap">
-            {{ formatDate(item.createdAt) }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- Nếu không có dữ liệu -->
-    <div v-if="!Array.isArray(newsData) || newsData.length === 0" class="text-center py-12 text-gray-500">
-      Chưa có tin tức nào.
-    </div>
-     <!-- Pagination -->
-     <div v-if="totalPages > 0"
-                  class="sticky bottom-0 bg-base-100 border-t border-base-300 px-6 py-3 flex items-center justify-between"
-                >
-                  <!-- Info -->
-                  <div class="text-sm text-gray-500">
-                    Showing
-                    <span class="font-medium">
-                      {{ (currentPage - 1) * pageSize + 1 }}
-                    </span>
-                    -
-                    <span class="font-medium">
-                      {{ Math.min(currentPage * pageSize, totalRecords) }}
-                    </span>
-                    of
-                    <span class="font-medium">{{ totalRecords }}</span>
-                    News And Events
-                  </div>
-
-                  <!-- Controls -->
-                  <div class="flex gap-1">
-                    <button
-                      class="btn btn-xs btn-ghost"
-                      :disabled="currentPage === 1"
-                      @click="prevPage"
-                    >
-                      «
+    <!-- Content Table -->
+    <div class="flex-1 min-h-0 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+      <div class="overflow-x-auto flex-1 scrollable">
+        <table class="w-full text-left border-collapse">
+          <thead class="sticky top-0 z-10 bg-slate-50 dark:bg-slate-800/80 backdrop-blur-md">
+            <tr>
+              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800 w-20 text-center">Action</th>
+              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Banner</th>
+              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Title</th>
+              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Status</th>
+              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Type</th>
+              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Created At</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+            <tr v-for="item in newsData" :key="item._id" class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+              <td class="px-6 py-4 text-center">
+                <div class="relative inline-block text-left group/dots">
+                  <button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                    </svg>
+                  </button>
+                  <div class="absolute left-0 mt-2 w-48 rounded-2xl bg-white dark:bg-slate-800 shadow-2xl border border-slate-200 dark:border-slate-700 py-2 z-50 opacity-0 invisible group-focus-within/dots:opacity-100 group-focus-within/dots:visible transition-all">
+                    <button @click="openUpdateDrawer(item)" class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                       Edit Article
                     </button>
-
-                    <div
-                      v-for="page in visiblePages"
-                      :key="page"
-                      class="btn btn-xs btn-ghost"
-                      :class="page === currentPage ? 'font-bold btn btn-xs btn-ghost' : ''"
-                      @click="goToPage(page)"
-                    >
-                      {{ page }}
-                    </div>
-
-                    <button
-                      class="btn btn-xs btn-ghost"
-                      :disabled="currentPage === totalPages"
-                      @click="nextPage"
-                    >
-                      »
+                    <button @click="statusUpdate(item._id, 'published')" class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                       Publish
+                    </button>
+                    <button @click="statusUpdate(item._id, 'drafted')" class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                       Set to Draft
+                    </button>
+                    <div class="h-px bg-slate-100 dark:bg-slate-700 my-1"></div>
+                    <button @click="deleteNews(item._id)" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                       Delete
                     </button>
                   </div>
-     </div>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="w-24 h-16 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 bg-slate-100">
+                  <img :src="item.src" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="max-w-xs xl:max-w-md">
+                  <div class="text-sm font-bold truncate">{{ item.title }}</div>
+                  <div class="text-xs text-slate-500 truncate mt-1">{{ item.description }}</div>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <span :class="['px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase', 
+                  item.status === 'published' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                  item.status === 'drafted' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
+                  'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400']">
+                  {{ item.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                 <span class="text-xs font-semibold px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800">
+                   {{ item.type }}
+                 </span>
+              </td>
+              <td class="px-6 py-4 text-xs font-mono text-slate-400">
+                {{ formatDate(item.createdAt) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Empty State -->
+        <div v-if="!isLoading && (!newsData || newsData.length === 0)" class="flex flex-col items-center justify-center py-24 text-center">
+           <div class="w-20 h-20 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-300 mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+           </div>
+           <h3 class="text-lg font-bold">No articles found</h3>
+           <p class="text-slate-500 max-w-xs mx-auto mt-2">Get started by creating your first news post or event update.</p>
+           <button @click="openEditDrawer" class="mt-6 px-6 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-xl active:scale-95 transition-all">Create Now</button>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div v-if="totalPages > 0" class="px-6 py-4 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-400">
+          Showing <span class="text-slate-900 dark:text-slate-100">{{ (currentPage - 1) * pageSize + 1 }}-{{ Math.min(currentPage * pageSize, totalRecords) }}</span>
+        </div>
+        
+        <div class="flex items-center gap-1">
+          <button @click="prevPage" :disabled="currentPage === 1" class="p-2 rounded-xl hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 disabled:opacity-30 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+          </button>
+          
+          <button v-for="page in visiblePages" :key="page" @click="goToPage(page)" 
+            :class="['w-10 h-10 flex items-center justify-center text-xs font-bold rounded-xl transition-all', page === currentPage ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/20 scale-110' : 'hover:bg-white dark:hover:bg-slate-800 text-slate-500 border border-transparent hover:border-slate-200']">
+            {{ page }}
+          </button>
+
+          <button @click="nextPage" :disabled="currentPage === totalPages" class="p-2 rounded-xl hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 disabled:opacity-30 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spinner Loading -->
+    <Teleport to="body">
+       <div v-if="isLoading" class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/5 backdrop-blur-[2px]">
+          <div class="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+       </div>
+    </Teleport>
+
+    <ToastMessage ref="toastRef" :typeToast="currentToastType" :message="toastMessage" :show="showToast" :width="`w-2/3 lg:w-fit`" class="z-40" />
   </div>
-      <ToastMessage
-      ref="toastRef"
-      :typeToast="currentToastType"
-      :message="toastMessage"
-      :show="showToast"
-      :width="`w-2/3 lg:w-fit`"
-      class="z-40"
-    />
 </template>
 
 <script setup>
 const informationStore = useInformationStore();
-  // Toast
 const toastRef = ref(null);
-const toastImageRef = ref(null); // Thêm ref cho ToastImage
 const showToast = ref(false);
-const showToastImage = ref(false); // Thêm biến để điều khiển hiển thị của ToastImage
 const currentToastType = ref("");
 const toastMessage = ref("");
-const toastImageUrl = ref(""); // Thêm biến để lưu URL cho ToastImage
-const showMessageToast = (type, message, url = "") => {
+
+const showMessageToast = (type, message) => {
   currentToastType.value = type;
   toastMessage.value = message;
-  showToast.value = !url; // Chỉ hiển thị Toast nếu không có URL
-  showToastImage.value = !!url; // Hiển thị ToastImage nếu có URL
-  toastImageUrl.value = url; // Gán URL cho ToastImage
-
-  if (url !== "") {
-    if (toastImageRef.value) {
-      // Hiển thị ToastImage khi showMessageToast được gọi
-      toastImageRef.value.show();
-    }
-  } else {
-    if (toastRef.value) {
-      toastRef.value.show();
-    }
-  }
+  showToast.value = true;
+  if (toastRef.value) toastRef.value.show();
 };
 
-//#region Pagination state
 const currentPage = ref(1)
-const pageSize = ref(3) // số item / trang
+const pageSize = ref(10)
 const totalRecords = ref(0)
-const totalPages = computed(() =>
-  Math.ceil(totalRecords.value / pageSize.value)
-)
+const totalPages = computed(() => Math.ceil(totalRecords.value / pageSize.value))
+
+const visiblePages = computed(() => {
+  const range = 2
+  let start = Math.max(1, currentPage.value - range)
+  let end = Math.min(totalPages.value, currentPage.value + range)
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i)
+})
 
 const goToPage = (page) => {
   if (page < 1 || page > totalPages.value) return
@@ -213,74 +196,26 @@ const prevPage = () => {
     fetchDataNews()
   }
 }
-const visiblePages = computed(() => {
-  const range = 2
-  let start = Math.max(1, currentPage.value - range)
-  let end = Math.min(totalPages.value, currentPage.value + range)
-  return Array.from({ length: end - start + 1 }, (_, i) => start + i)
-})
-
-//#endregion
 
 const config = useRuntimeConfig();
 const newsData = ref([])
 const isLoading = ref(false)
 
-// const newsData = ref([
-//   {
-//     _id: '68abd3e98587e969d74a1ba1',
-//     slug: "gateway-city-vinh-long-cong-bo-tien-do-moi-hoan-thien-ha-tang-loi-tien-ich-trong-diem",
-//     src: 'https://res.cloudinary.com/dgkceewlq/image/upload/v1734690255/samples/imagecon-group.jpg',
-//     type: 'NEWS',
-//     status: 'drafted',
-//     createdAt: '2025-08-25T03:09:29.943Z',
-//     content: "<div style='background-color:#FFFFFF;color:#222222;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'><table role='presentation' style='margin:0 auto;max-width:100%;background-color:#FFFFFF' width='100%' align='center'><tbody><tr style='width:100%'><td><div style='font-weight:normal;padding:16px 0'>With the aim of solidifying its leading position in Vietnam and expanding into international markets, TranDuc participated in Sydney Build Expo 2025, a premier event showcasing advanced and sustainable construction solutions. As a top-tier enterprise in Vietnam, TranDuc presented its high-quality products, including engineered wood solutions, premium doors, and luxury prefabricated housing. TranDuc's participation in the expo underscores the company's commitment to promoting sustainable construction and collaborating with international businesses, particularly in the Australian market, which is experiencing strong growth in environmentally friendly building methods.</div><div style='padding:16px 0'><img class='e-rte-image e-imginline' style='outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%' src='https://imagedelivery.net/-tulz6ZB1FiuYVxo4sc-HQ/262b7ed0-ccf6-412c-5d5a-45acee324d00/2K' alt='Sample product'></div><div style='font-weight:normal;padding:16px 0'>Throughout the three-day event, TranDuc's booth garnered significant attention from a wide range of builders, architects, and developers from various countries. The standout solutions highlighted by TranDuc included:</div><div style='font-weight:normal;padding:16px 0'>Engineered Wood Solutions (Glulam &amp; CLT): TranDuc proudly stands as the first enterprise in Southeast Asia to own a CLT (Cross-Laminated Timber) production line – an advanced technology for producing high-strength, environmentally friendly wood components certified by the FSC. TranDuc's CLT products received high praise for their ability to minimize environmental impact and create sustainable structures.</div><div style='font-weight:normal;padding:16px 0'>Premium Door Solutions: TranDuc's exquisite door products offer superior aesthetics and exceptional performance in sound and thermal insulation. They are an ideal choice for high-end construction projects, meeting stringent international standards.</div><div style='font-weight:normal;padding:16px 0'>Luxury Prefabricated Housing Solutions: TranDuc showcased its range of high-end prefabricated houses, providing a solution that saves construction time and costs while ensuring high quality and aesthetic appeal. These products are a perfect choice for projects requiring high standards of sustainability and comfort.</div><div style='padding:16px 0'><img class='e-rte-image e-imginline' style='outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%' src='https://imagedelivery.net/-tulz6ZB1FiuYVxo4sc-HQ/c882f734-997a-4ad5-978d-cbbb3dbc7200/2K' alt='Sample product'></div><div style='font-weight:normal;padding:16px 0'>Australia is currently a frontrunner in adopting sustainable construction practices. At the expo, TranDuc had valuable opportunities to network and share its advanced building solutions with businesses in Sydney, supporting their journey towards sustainable development. Over the three days of the event, TranDuc's booth not only attracted strong interest from builders, architects, and developers but also fostered potential partnerships, opening doors for long-term growth in the Australian market and the Asia-Pacific region.</div><div style='font-weight:normal;padding:16px 0'>TranDuc is committed to continuously developing innovative and sustainable building solutions that meet stringent quality requirements and environmental protection standards. Participation in Sydney Build Expo 2025 marks a significant step in TranDuc's strategy for international expansion and market leadership. We are proud to bring building solutions that are not only advanced but also contribute to the sustainable development of the global construction industry.</div></td></tr></tbody></table></div>",
-//     title: 'GATEWAY CITY VĨNH LONG CÔNG BỐ TIẾN ĐỘ MỚI – HOÀN THIỆN HẠ TẦNG LÕI & TIỆN ÍCH TRỌNG ĐIỂM 2',
-//     description: 'Gateway City Vĩnh Long vừa cập nhật tiến độ xây dựng mới nhất trong tháng này, đánh dấu nhiều hạng mục trọng điểm bước vào giai đoạn hoàn thiện. Hiện tại, tuyến đường nội khu chính đã được trải nhựa, hệ thống điện – nước âm và chiếu sáng công cộng đã lắp đặt gần như hoàn tất. Khu vực quảng trường trung tâm và tuyến phố ven sông đang thi công cảnh quan, dự kiến sẽ ra mắt trong thời gian tới. Bên cạnh đó, khu biệt thự và nhà phố thương mại đang được nhà thầu đẩy nhanh tiến độ để bàn giao đúng kế hoạch. Việc hạ tầng được hoàn thiện đồng bộ giúp dự án đạt tính hiện hữu cao, tạo thêm niềm tin cho khách hàng và thể hiện cam kết mạnh mẽ của chủ đầu tư trong việc xây dựng một quần thể All-In-Compound đầu tiên tại miền Tây.'
-//   },
-//   {
-//     _id: '68abd3e98587e969d74a1ba2',
-//     slug: "gateway-city-vinh-long-cong-bo-tien-do-moi-hoan-thien-ha-tang-loi-tien-ich-trong-diem",
-//     src: 'https://res.cloudinary.com/dgkceewlq/image/upload/v1734690256/samples/cloudinary-group.jpg',
-//     type: 'NEWS',
-//     status: 'published',
-//     createdAt: '2025-08-25T03:09:29.943Z',
-//     content: "<div style='background-color:#FFFFFF;color:#222222;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'><table role='presentation' style='margin:0 auto;max-width:100%;background-color:#FFFFFF' width='100%' align='center'><tbody><tr style='width:100%'><td><div style='font-weight:normal;padding:16px 0'>With the aim of solidifying its leading position in Vietnam and expanding into international markets, TranDuc participated in Sydney Build Expo 2025, a premier event showcasing advanced and sustainable construction solutions. As a top-tier enterprise in Vietnam, TranDuc presented its high-quality products, including engineered wood solutions, premium doors, and luxury prefabricated housing. TranDuc's participation in the expo underscores the company's commitment to promoting sustainable construction and collaborating with international businesses, particularly in the Australian market, which is experiencing strong growth in environmentally friendly building methods.</div><div style='padding:16px 0'><img class='e-rte-image e-imginline' style='outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%' src='https://imagedelivery.net/-tulz6ZB1FiuYVxo4sc-HQ/262b7ed0-ccf6-412c-5d5a-45acee324d00/2K' alt='Sample product'></div><div style='font-weight:normal;padding:16px 0'>Throughout the three-day event, TranDuc's booth garnered significant attention from a wide range of builders, architects, and developers from various countries. The standout solutions highlighted by TranDuc included:</div><div style='font-weight:normal;padding:16px 0'>Engineered Wood Solutions (Glulam &amp; CLT): TranDuc proudly stands as the first enterprise in Southeast Asia to own a CLT (Cross-Laminated Timber) production line – an advanced technology for producing high-strength, environmentally friendly wood components certified by the FSC. TranDuc's CLT products received high praise for their ability to minimize environmental impact and create sustainable structures.</div><div style='font-weight:normal;padding:16px 0'>Premium Door Solutions: TranDuc's exquisite door products offer superior aesthetics and exceptional performance in sound and thermal insulation. They are an ideal choice for high-end construction projects, meeting stringent international standards.</div><div style='font-weight:normal;padding:16px 0'>Luxury Prefabricated Housing Solutions: TranDuc showcased its range of high-end prefabricated houses, providing a solution that saves construction time and costs while ensuring high quality and aesthetic appeal. These products are a perfect choice for projects requiring high standards of sustainability and comfort.</div><div style='padding:16px 0'><img class='e-rte-image e-imginline' style='outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%' src='https://imagedelivery.net/-tulz6ZB1FiuYVxo4sc-HQ/c882f734-997a-4ad5-978d-cbbb3dbc7200/2K' alt='Sample product'></div><div style='font-weight:normal;padding:16px 0'>Australia is currently a frontrunner in adopting sustainable construction practices. At the expo, TranDuc had valuable opportunities to network and share its advanced building solutions with businesses in Sydney, supporting their journey towards sustainable development. Over the three days of the event, TranDuc's booth not only attracted strong interest from builders, architects, and developers but also fostered potential partnerships, opening doors for long-term growth in the Australian market and the Asia-Pacific region.</div><div style='font-weight:normal;padding:16px 0'>TranDuc is committed to continuously developing innovative and sustainable building solutions that meet stringent quality requirements and environmental protection standards. Participation in Sydney Build Expo 2025 marks a significant step in TranDuc's strategy for international expansion and market leadership. We are proud to bring building solutions that are not only advanced but also contribute to the sustainable development of the global construction industry.</div></td></tr></tbody></table></div>",
-//     title: 'GATEWAY CITY VĨNH LONG CÔNG BỐ TIẾN ĐỘ MỚI – HOÀN THIỆN HẠ TẦNG LÕI & TIỆN ÍCH TRỌNG ĐIỂM',
-//     description: 'Gateway City Vĩnh Long vừa cập nhật tiến độ xây dựng mới nhất trong tháng này, đánh dấu nhiều hạng mục trọng điểm bước vào giai đoạn hoàn thiện. Hiện tại, tuyến đường nội khu chính đã được trải nhựa, hệ thống điện – nước âm và chiếu sáng công cộng đã lắp đặt gần như hoàn tất. Khu vực quảng trường trung tâm và tuyến phố ven sông đang thi công cảnh quan, dự kiến sẽ ra mắt trong thời gian tới. Bên cạnh đó, khu biệt thự và nhà phố thương mại đang được nhà thầu đẩy nhanh tiến độ để bàn giao đúng kế hoạch. Việc hạ tầng được hoàn thiện đồng bộ giúp dự án đạt tính hiện hữu cao, tạo thêm niềm tin cho khách hàng và thể hiện cam kết mạnh mẽ của chủ đầu tư trong việc xây dựng một quần thể All-In-Compound đầu tiên tại miền Tây.'
-//   },
-//   {
-//     _id: '68abd3e98587e969d74a1bbe',
-//     slug: "su-kien-khoi-cong-trung-tam-thuong-mai-nghin-ti-tai-gateway-city",
-//     src: 'https://res.cloudinary.com/dgkceewlq/image/upload/v1734690255/samples/landscapes/beach-boat.jpg',
-//     type: 'EVENTS',
-//     status: 'published',
-//     createdAt: '2025-08-25T03:09:29.943Z',
-//     content: "<div style='background-color:#FFFFFF;color:#222222;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'><table role='presentation' style='margin:0 auto;max-width:100%;background-color:#FFFFFF' width='100%' align='center'><tbody><tr style='width:100%'><td><div style='font-weight:normal;padding:16px 0'>With the aim of solidifying its leading position in Vietnam and expanding into international markets, TranDuc participated in Sydney Build Expo 2025, a premier event showcasing advanced and sustainable construction solutions. As a top-tier enterprise in Vietnam, TranDuc presented its high-quality products, including engineered wood solutions, premium doors, and luxury prefabricated housing. TranDuc's participation in the expo underscores the company's commitment to promoting sustainable construction and collaborating with international businesses, particularly in the Australian market, which is experiencing strong growth in environmentally friendly building methods.</div><div style='padding:16px 0'><img class='e-rte-image e-imginline' style='outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%' src='https://imagedelivery.net/-tulz6ZB1FiuYVxo4sc-HQ/262b7ed0-ccf6-412c-5d5a-45acee324d00/2K' alt='Sample product'></div><div style='font-weight:normal;padding:16px 0'>Throughout the three-day event, TranDuc's booth garnered significant attention from a wide range of builders, architects, and developers from various countries. The standout solutions highlighted by TranDuc included:</div><div style='font-weight:normal;padding:16px 0'>Engineered Wood Solutions (Glulam &amp; CLT): TranDuc proudly stands as the first enterprise in Southeast Asia to own a CLT (Cross-Laminated Timber) production line – an advanced technology for producing high-strength, environmentally friendly wood components certified by the FSC. TranDuc's CLT products received high praise for their ability to minimize environmental impact and create sustainable structures.</div><div style='font-weight:normal;padding:16px 0'>Premium Door Solutions: TranDuc's exquisite door products offer superior aesthetics and exceptional performance in sound and thermal insulation. They are an ideal choice for high-end construction projects, meeting stringent international standards.</div><div style='font-weight:normal;padding:16px 0'>Luxury Prefabricated Housing Solutions: TranDuc showcased its range of high-end prefabricated houses, providing a solution that saves construction time and costs while ensuring high quality and aesthetic appeal. These products are a perfect choice for projects requiring high standards of sustainability and comfort.</div><div style='padding:16px 0'><img class='e-rte-image e-imginline' style='outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%' src='https://imagedelivery.net/-tulz6ZB1FiuYVxo4sc-HQ/c882f734-997a-4ad5-978d-cbbb3dbc7200/2K' alt='Sample product'></div><div style='font-weight:normal;padding:16px 0'>Australia is currently a frontrunner in adopting sustainable construction practices. At the expo, TranDuc had valuable opportunities to network and share its advanced building solutions with businesses in Sydney, supporting their journey towards sustainable development. Over the three days of the event, TranDuc's booth not only attracted strong interest from builders, architects, and developers but also fostered potential partnerships, opening doors for long-term growth in the Australian market and the Asia-Pacific region.</div><div style='font-weight:normal;padding:16px 0'>TranDuc is committed to continuously developing innovative and sustainable building solutions that meet stringent quality requirements and environmental protection standards. Participation in Sydney Build Expo 2025 marks a significant step in TranDuc's strategy for international expansion and market leadership. We are proud to bring building solutions that are not only advanced but also contribute to the sustainable development of the global construction industry.</div></td></tr></tbody></table></div>",
-//     title: 'SỰ KIỆN – KHỞI CÔNG TRUNG TÂM THƯƠNG MẠI “NGHÌN TỈ” TẠI GATEWAY CITY',
-//     description: 'Ngày 2/8/2025, tại khu đô thị Gateway City Vĩnh Long đã diễn ra lễ khởi công Trung tâm Thương mại SenseFesti với tổng vốn đầu tư gần 1.000 tỉ đồng, do Saigon Co.op (SCID) kết hợp cùng Tập đoàn Thành Đô phát triển. Đây sẽ là một trong những tổ hợp mua sắm – giải trí – ẩm thực hiện đại nhất miền Tây, đồng thời là tiện ích thương mại trọng điểm của Gateway City.'
-//   },
-// ])
-
 const openEditDrawer = () => {
+  informationStore.setInformation(null);
   informationStore.setIsOpen(true);
 };
-
-// Format ngày đẹp
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('vi-VN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
 
 const openUpdateDrawer = (item) => {
     informationStore.setInformation(item);
     informationStore.setIsOpen(true);
+}
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('vi-VN', {
+    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+  })
 }
 
 const refreshNews = () => {
@@ -297,16 +232,9 @@ const fetchDataNews = async () => {
         skip: (currentPage.value - 1) * pageSize.value,
         take: pageSize.value,
         requiresCounts: true,
-        sorted: [
-          { name: 'createdAt', direction: 'descending' }
-        ]
+        sorted: [{ name: 'createdAt', direction: 'descending' }]
       }
     });
-
-    newsData.value = Array.isArray(response.result) 
-      ? response.result
-      : (response.result && Array.isArray(response.result.items) ? response.result.items : []);
-
     newsData.value = response.result || []
     totalRecords.value = response.count || 0
   } catch (error) {
@@ -318,21 +246,16 @@ const fetchDataNews = async () => {
 }
 
 const deleteNews = async (_id) => {
+  if (!confirm('Are you sure you want to delete this news?')) return;
   isLoading.value = true;
   try {
-    const response = await $fetch(`${config.public.apiBase}/newandevents/delete`, {
+    await $fetch(`${config.public.apiBase}/newandevents/delete`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: {
-        _id: _id
-      }
+      body: { _id }
     });
     fetchDataNews();
-    showMessageToast('success', 'Delete successfully');
+    showMessageToast('success', 'Deleted successfully');
   } catch (error) {
-    console.error('Error deleting news:', error);
     showMessageToast('error', 'Delete failed');
   } finally {
     isLoading.value = false;
@@ -342,39 +265,20 @@ const deleteNews = async (_id) => {
 const statusUpdate = async (_id, status) => {
   isLoading.value = true;
   try {
-    const response = await $fetch(`${config.public.apiBase}/newandevents/update-status`, {
+    await $fetch(`${config.public.apiBase}/newandevents/update-status`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: {
-        _id: _id,
-        status: status
-      }
+      body: { _id, status }
     });
     fetchDataNews();
-    showMessageToast('success', 'Update successfully');
+    showMessageToast('success', 'Status updated');
   } catch (error) {
-    console.error('Error updating news:', error);
     showMessageToast('error', 'Update failed');
   } finally {
     isLoading.value = false;
   }
 }
 
-onMounted( async () => {
-  await fetchDataNews();
+onMounted(() => {
+  fetchDataNews();
 })
-
 </script>
-
-<style scoped>
-.dropdown .dropdown-content {
-  pointer-events: none;
-}
-
-.dropdown.dropdown-open .dropdown-content,
-.dropdown:focus-within .dropdown-content {
-  pointer-events: auto;
-}
-</style>
