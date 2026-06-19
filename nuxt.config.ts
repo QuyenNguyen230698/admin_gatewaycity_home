@@ -32,8 +32,8 @@ export default defineNuxtConfig({
       bodyAttrs: { class: "h-full" },
       title: "Gateway Co Chien Admin",
       link: [
-        { rel: "icon", type: "image/x-icon", href: "/Logo.svg" },
-        { rel: "apple-touch-icon", sizes: "180x180", href: "/Logo.svg" },
+        { rel: "icon", type: "image/x-icon", href: "https://res.cloudinary.com/dpcigceaq/image/upload/v1781874951/AdminAssets/htbspgp5pevgh953qwuk.png" },
+        { rel: "apple-touch-icon", sizes: "180x180", href: "https://res.cloudinary.com/dpcigceaq/image/upload/v1781874951/AdminAssets/htbspgp5pevgh953qwuk.png" },
         { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" }
       ],
       meta: [
@@ -48,7 +48,7 @@ export default defineNuxtConfig({
         { property: "og:description", content: "Gateway Co Chien Admin" },
         { property: "og:site_name", content: "Gateway Co Chien" },
         { property: "og:type", content: "website" },
-        { property: "og:image", content: "/Logo.png" },
+        { property: "og:image", content: "https://res.cloudinary.com/dpcigceaq/image/upload/v1781874951/AdminAssets/htbspgp5pevgh953qwuk.png" },
       ],
     },
     pageTransition: { name: 'page', mode: 'out-in' }

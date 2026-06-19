@@ -15,7 +15,7 @@
       >
         <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-xl bg-[#1C351C] shadow-md">
           <NuxtImg
-            src="/Logo.svg"
+            src="https://res.cloudinary.com/dpcigceaq/image/upload/v1781874951/AdminAssets/htbspgp5pevgh953qwuk.png"
             class="w-7 h-7 object-contain"
           />
         </div>

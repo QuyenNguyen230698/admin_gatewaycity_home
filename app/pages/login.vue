@@ -13,7 +13,7 @@
            <div class="w-20 h-20 rounded-full bg-white border border-gray-100 flex items-center justify-center relative shadow-sm group">
               <div class="absolute inset-0 rounded-full border border-blue-500 animate-ping opacity-10"></div>
               <NuxtImg class="h-12 w-12 relative z-10 object-contain group-hover:scale-110 transition-transform"
-                       src="/Logo.svg"
+                       src="https://res.cloudinary.com/dpcigceaq/image/upload/v1781874951/AdminAssets/htbspgp5pevgh953qwuk.png"
                        alt="Gateway Co Chien" />
            </div>
         </div>
