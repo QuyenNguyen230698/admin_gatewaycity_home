@@ -1,79 +1,76 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50">
-    <div class="relative w-full max-w-md px-8 py-12 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50">
-      <!-- Decorative -->
-      <div class="absolute -top-6 -left-6 w-12 h-12 bg-blue-500/10 rounded-full blur-xl"></div>
-      <div class="absolute -bottom-8 -right-8 w-16 h-16 bg-indigo-500/10 rounded-full blur-xl"></div>
+  <div class="h-screen w-screen overflow-hidden bg-[#f8f9fa] flex items-center justify-center p-6 relative font-sans antialiased">
+    
+    <LoginThreeBackground class="z-0" />
+    
+    <div class="absolute inset-0 pointer-events-none z-10 opacity-[0.01] bg-[linear-gradient(#4285f4_1px,transparent_1px)] bg-[length:100%_4px]"></div>
 
-      <!-- Logo -->
-      <div class="flex justify-center mb-10">
-        <div class="relative">
-          <div class="absolute -inset-4 bg-blue-100/30 rounded-full blur"></div>
-          <NuxtImg class="relative h-16 w-16" src="https://res.cloudinary.com/dpcigceaq/image/upload/v1765281506/Media%20Gateway%20City/iiingth1w5eatij5cju0.svg" alt="logo" format="webp" loading="eager" />
+    <div ref="loginContainer" 
+         class="relative z-20 w-full max-w-md p-10 bg-white/80 backdrop-blur-xl border border-gray-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] opacity-0 transform translate-y-8 rounded-2xl">
+      
+      <header class="text-center mb-10">
+        <div class="flex justify-center mb-6">
+           <div class="w-20 h-20 rounded-full bg-white border border-gray-100 flex items-center justify-center relative shadow-sm group">
+              <div class="absolute inset-0 rounded-full border border-blue-500 animate-ping opacity-10"></div>
+              <NuxtImg class="h-12 w-12 relative z-10 object-contain group-hover:scale-110 transition-transform"
+                       src="/Logo.svg"
+                       alt="Gateway Co Chien" />
+           </div>
         </div>
-      </div>
+        <h2 class="text-[11px] font-bold uppercase tracking-[0.2em] text-blue-600 mb-2">Secure Access</h2>
+        <h1 class="text-2xl font-semibold text-gray-900 tracking-tight">System Login</h1>
+      </header>
 
-      <!-- Form -->
-      <div class="space-y-8">
-        <div class="text-center space-y-2">
-          <h2 class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-            Welcome Back
-          </h2>
-          <p class="text-gray-600">Đăng nhập bằng tài khoản nội bộ</p>
-        </div>
+      <form @submit.prevent="handleLogin" class="space-y-5">
+        <SharedBaseInput
+          v-model="email"
+          label="Email Address"
+          placeholder="name@company.com"
+          type="text"
+          :error="loginError"
+          class="google-input"
+        />
 
-        <form @submit.prevent="handleLogin" class="space-y-5">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Tài khoản</label>
-            <input
-              v-model="email"
-              type="text"
-              required
-              autocomplete="email"
-              placeholder="Nhập tài khoản email"
-              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none bg-white/70 transition"
-            />
-          </div>
+        <SharedBaseInput
+          v-model="password"
+          label="Password"
+          placeholder="••••••••"
+          type="password"
+        />
 
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Mật khẩu</label>
-            <input
-              v-model="password"
-              type="password"
-              required
-              autocomplete="current-password"
-              placeholder="Nhập mật khẩu"
-              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none bg-white/70 transition"
-            />
-          </div>
-
-          <!-- Thông báo lỗi -->
-          <transition name="fade">
-            <div v-if="error" class="text-red-600 text-center text-sm bg-red-50 py-2.5 px-4 rounded-lg">
-              {{ error }}
-            </div>
-          </transition>
-
+        <div class="pt-2">
           <button
             type="submit"
             :disabled="loading"
-            class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3.5 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+            class="w-full bg-[#1a73e8] hover:bg-[#1557b0] text-white font-medium py-3 rounded-lg transition-all shadow-md disabled:opacity-50"
           >
-            <span v-if="loading" class="flex items-center justify-center gap-2">
-              <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-              </svg>
-              Đang đăng nhập...
-            </span>
-            <span v-else>Đăng nhập</span>
+            <span v-if="!loading">Sign In</span>
+            <span v-else>Processing...</span>
           </button>
-        </form>
-      </div>
+        </div>
 
-      <div class="mt-12 text-center text-sm text-gray-500">
-        © 2025 Gateway City - Vĩnh Long. <strong>All rights reserved.</strong>
-      </div>
+        <div class="relative flex items-center gap-4 py-2">
+          <div class="flex-1 h-[1px] bg-gray-200"></div>
+          <span class="text-[10px] font-medium text-gray-400 uppercase">Identity Provider</span>
+          <div class="flex-1 h-[1px] bg-gray-200"></div>
+        </div>
+
+        <div class="flex justify-center">
+          <LoginGoogleSignIn 
+            :clientId="config.public.googleClientId" 
+            @success="handleGoogleSuccess"
+            @error="err => loginError = err"
+          />
+        </div>
+      </form>
+
+      <footer class="mt-10 text-center text-[11px] text-gray-400 flex flex-col items-center gap-1">
+         <span class="font-medium">© 2026 Gateway Co Chien</span>
+         <div class="flex gap-3 opacity-70">
+            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Core Optimal</span>
+            <span>Encrypted Link</span>
+         </div>
+      </footer>
     </div>
   </div>
 </template>
@@ -81,20 +78,24 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-const router = useRouter()
+import gsap from 'gsap'
 
+definePageMeta({
+  layout: false
+})
+
+const router = useRouter()
 const config = useRuntimeConfig()
 
+const loginContainer = ref(null)
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
-const error = ref('')
+const loginError = ref('')
 
-// Kiểm tra session
 const isLoginSessionValid = () => {
   const session = localStorage.getItem('loginSession')
   if (!session) return false
-
   try {
     const { expiry } = JSON.parse(session)
     return new Date().getTime() < expiry
@@ -103,64 +104,67 @@ const isLoginSessionValid = () => {
   }
 }
 
-// Xử lý login
 const handleLogin = async () => {
-  error.value = ''
+  loginError.value = ''
   loading.value = true
-
-  await new Promise(resolve => setTimeout(resolve, 600))
-
   try {
     const response = await $fetch(`${config.public.apiBase}/users/login-admin`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email.value,
-        password: password.value,
-      }),
+      body: JSON.stringify({ email: email.value, password: password.value }),
     })
-
-    const { token, data: user } = response
-
-    // ⏳ Set expiry sau 24h (hoặc 5 phút tuỳ bạn)
-    const expiryTime = Date.now() + 30 * 60 * 1000
-
-    // 🔥 LƯU TẤT CẢ VÀO 1 OBJECT
-    const sessionData = {
-      token,
-      user,
-      expiry: expiryTime
-    }
-
-    localStorage.setItem('loginSession', JSON.stringify(sessionData))
-
-    // Điều hướng về trang news
-    router.push('/')
-
+    saveSession(response.token, response.data)
+    router.push('/callback')
   } catch (err) {
-    error.value = 'Tài khoản hoặc mật khẩu không chính xác'
+    loginError.value = 'Cipher Mismatch. Access Denied.'
   } finally {
     loading.value = false
   }
 }
 
+const handleGoogleSuccess = async (idToken) => {
+  loginError.value = ''
+  loading.value = true
+  try {
+    const response = await $fetch(`${config.public.apiBase}/auth/google/login`, {
+      method: 'POST',
+      body: JSON.stringify({ idToken }),
+    })
+    if (response.result) {
+      saveSession(response.token, response.data)
+      router.push('/callback')
+    } else {
+      loginError.value = response.message || 'Bridge Failed.'
+    }
+  } catch (err) {
+    loginError.value = 'Infrastructure Link Timeout.'
+  } finally {
+    loading.value = false
+  }
+}
 
-// Tự động login nếu session còn hợp lệ
+const saveSession = (token, user) => {
+  const sessionData = { token, user, expiry: Date.now() + 86400000 }
+  localStorage.setItem('loginSession', JSON.stringify(sessionData))
+}
+
 onMounted(() => {
+  gsap.to(loginContainer.value, {
+    opacity: 1,
+    y: 0,
+    duration: 1.5,
+    ease: 'expo.out',
+    delay: 0.3
+  })
+
   if (isLoginSessionValid()) {
     router.push('/')
   }
 })
 </script>
 
-
 <style scoped>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
+.glass-effect {
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(20px);
 }
 </style>

@@ -1,38 +1,24 @@
 // middleware/auth.js
-
 export default defineNuxtRouteMiddleware((to) => {
-  // Bỏ qua kiểm tra nếu đang vào trang login
-  if (to.path === '/login') {
-    return
+  if (to.path === '/login') return
+
+  // Sử dụng useCookie của Nuxt (tự động hoạt động cả SSR và Client)
+  const session = useCookie('loginSession')
+
+  if (!session.value) {
+    console.warn("Auth: No session found. Redirecting to login.")
+    return navigateTo('/login')
   }
 
-  // Chỉ chạy ở client (tránh lỗi SSR)
-  if (process.client) {
-    const session = localStorage.getItem('loginSession')
-
-    if (!session) {
+  // Nếu session là Object (đã parse), kiểm tra expiry
+  try {
+    const data = session.value
+    if (data.expiry && Date.now() >= data.expiry) {
+      session.value = null // Xóa cookie
       return navigateTo('/login')
     }
-
-    try {
-      const data = JSON.parse(session)
-
-      // Kiểm tra expiry đúng như bạn đã lưu: new Date().getTime()
-      if (Date.now() >= data.expiry) {
-        localStorage.removeItem('loginSession') // hết hạn → xóa luôn
-        return navigateTo('/login')
-      }
-
-      // Còn hợp lệ → cho qua
-      return
-    } catch (error) {
-      // JSON hỏng → xóa và đá về login
-      localStorage.removeItem('loginSession')
-      return navigateTo('/login')
-    }
+  } catch (error) {
+    session.value = null
+    return navigateTo('/login')
   }
-
-  // Nếu đang ở server → tạm cho qua (sẽ kiểm tra lại ở client)
-  // Hoặc có thể chặn luôn nếu muốn bảo mật cao hơn
-  return
 })

@@ -1,85 +1,107 @@
 <template>
-  <div class="h-full flex flex-col space-y-6 animate-fade-in text-slate-900 dark:text-slate-100">
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
-      <div class="flex items-center gap-3">
-        <div class="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        </div>
-        <div>
-          <h2 class="text-2xl font-bold">Real Estate Products</h2>
-          <p class="text-sm text-slate-500">Manage property listings and building blueprints</p>
-        </div>
-      </div>
+  <div class="h-full flex flex-col">
 
+    <!-- Sticky Header -->
+    <div class="px-8 py-6 border-b border-zinc-200 dark:border-zinc-800
+                flex items-center justify-between shrink-0
+                bg-white dark:bg-slate-900 sticky top-0 z-10">
+      <div>
+        <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Real Estate Products</h1>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Manage property listings and building blueprints</p>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4
+                bg-zinc-50/50 dark:bg-slate-900/50 shrink-0
+                border-b border-zinc-200 dark:border-zinc-800">
+      <div class="relative max-w-md w-full">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="bi bi-search text-zinc-400"></i>
+        </div>
+        <input v-model="searchQuery" type="text"
+          class="w-full pl-10 pr-4 py-2.5
+                 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700
+                 rounded-lg text-sm focus:ring-2 focus:ring-black dark:focus:ring-white
+                 outline-none transition-all dark:text-white placeholder-zinc-400 shadow-sm"
+          placeholder="Search products..." />
+      </div>
       <div class="flex items-center gap-3">
-        <button @click="refreshProducts" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95 shadow-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" :class="['w-4 h-4', isLoading ? 'animate-spin' : '']" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          <span>Refresh</span>
+        <button @click="refreshProducts"
+          class="w-9 h-9 flex items-center justify-center
+                 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700
+                 rounded-lg text-zinc-500 hover:text-black dark:hover:text-white transition-colors">
+          <i :class="['bi bi-arrow-clockwise', isLoading ? 'animate-spin' : '']"></i>
         </button>
       </div>
     </div>
 
-    <!-- Inventory Grid/Table -->
-    <div class="flex-1 min-h-0 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
-       <div class="overflow-x-auto flex-1 custom-scrollbar">
-          <table class="w-full text-left border-collapse">
-            <thead class="sticky top-0 z-10 bg-slate-50 dark:bg-slate-800/80 backdrop-blur-md">
-              <tr>
-                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800 w-20 text-center">Action</th>
-                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Preview</th>
-                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Property Title</th>
-                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Slug</th>
-                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Created At</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-              <tr v-for="item in productsData" :key="item._id" class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors h-24">
-                <td class="px-6 py-4 text-center">
-                   <button @click="openUpdateDrawer(item)" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-primary-500 hover:text-white transition-all text-slate-500">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                     </svg>
-                   </button>
-                </td>
-                <td class="px-6 py-4">
-                  <div class="w-32 h-20 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 bg-slate-100">
-                    <img :src="item.images[0]" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  </div>
-                </td>
-                <td class="px-6 py-4">
-                   <div class="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-tight">{{ item.title }}</div>
-                   <div class="text-[10px] text-primary-500 font-bold mt-1 uppercase">Active Project</div>
-                </td>
-                <td class="px-6 py-4 font-mono text-xs text-slate-400 break-all max-w-xs">{{ item.slug }}</td>
-                <td class="px-6 py-4 text-xs text-slate-400">{{ formatDate(item.createdAt) }}</td>
-              </tr>
-            </tbody>
-          </table>
+    <!-- Content Area -->
+    <div class="flex-1 overflow-auto px-8 py-4">
 
-          <!-- Empty State -->
-          <div v-if="!isLoading && (!productsData || productsData.length === 0)" class="flex flex-col items-center justify-center py-24 text-center">
-             <div class="w-20 h-20 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-200 mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-             </div>
-             <h3 class="text-lg font-bold">No products available</h3>
-             <p class="text-slate-500 text-sm mt-2">Initialize your property catalog to start managing.</p>
-          </div>
-       </div>
+      <!-- Loading State -->
+      <div v-if="isLoading" class="flex flex-col items-center justify-center h-64 text-zinc-400">
+        <div class="w-8 h-8 border-2 border-zinc-300 border-t-zinc-600 rounded-full animate-spin mb-4"></div>
+        <p>Loading products...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="!filteredProducts.length"
+        class="flex flex-col items-center justify-center h-64 text-zinc-400
+               border-2 border-dashed border-zinc-200 dark:border-zinc-800
+               rounded-xl bg-zinc-50/50 dark:bg-zinc-800/30">
+        <div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4">
+          <i class="bi bi-inbox text-2xl"></i>
+        </div>
+        <h3 class="text-zinc-900 dark:text-white font-medium mb-1">No products found</h3>
+        <p class="text-sm">Initialize your property catalog to start managing.</p>
+      </div>
+
+      <!-- Table -->
+      <div v-else class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm overflow-hidden">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-zinc-50/50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-700">
+              <th class="px-6 py-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Preview</th>
+              <th class="px-6 py-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Property Title</th>
+              <th class="px-6 py-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Slug</th>
+              <th class="px-6 py-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Created At</th>
+              <th class="px-6 py-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700">
+            <tr v-for="item in filteredProducts" :key="item._id"
+              class="group hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
+              <td class="px-6 py-4">
+                <div class="w-28 h-18 rounded-lg overflow-hidden shadow-sm border border-zinc-200 dark:border-zinc-700 bg-zinc-100">
+                  <img :src="item.images?.[0]" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm font-bold text-zinc-900 dark:text-white tracking-tight">{{ item.title }}</div>
+                <div class="text-xs text-green-600 font-semibold mt-1">
+                  <span class="inline-flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
+                  </span>
+                </div>
+              </td>
+              <td class="px-6 py-4 font-mono text-xs text-zinc-400 dark:text-zinc-500 max-w-xs truncate">{{ item.slug }}</td>
+              <td class="px-6 py-4 text-xs text-zinc-400">{{ formatDate(item.createdAt) }}</td>
+              <td class="px-6 py-4 text-right">
+                <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button @click="openUpdateDrawer(item)"
+                    class="w-8 h-8 flex items-center justify-center rounded-lg
+                           hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                    <i class="bi bi-pencil text-sm"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
-
-    <!-- Spinner Loading -->
-    <Teleport to="body">
-       <div v-if="isLoading" class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-900/10 backdrop-blur-[2px]">
-          <div class="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-       </div>
-    </Teleport>
 
     <ProductDrawer />
     <ToastMessage ref="toastRef" :typeToast="currentToastType" :message="toastMessage" :show="showToast" :width="`w-2/3 lg:w-fit`" class="z-40" />
@@ -87,16 +109,25 @@
 </template>
 
 <script setup>
+definePageMeta({ layout: 'default' })
+
 const productStore = useProductStore();
 const config = useRuntimeConfig();
-
 const toastRef = ref(null);
 const showToast = ref(false);
 const currentToastType = ref("");
 const toastMessage = ref("");
-
 const isLoading = ref(false)
 const productsData = ref([])
+const searchQuery = ref('')
+
+const filteredProducts = computed(() => {
+  if (!searchQuery.value) return productsData.value
+  return productsData.value.filter(p =>
+    p.title?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    p.slug?.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+})
 
 const formatDate = (dateString) => {
   const date = new Date(dateString)
@@ -106,13 +137,16 @@ const formatDate = (dateString) => {
 }
 
 const openUpdateDrawer = (item) => {
-    productStore.setProduct(item);
+  productStore.setProduct(item);
 }
 
 const fetchDataProducts = async () => {
   isLoading.value = true;
   try {
-    const response = await $fetch(`${config.public.apiBase}/products/list`);
+    const response = await $fetch(`${config.public.apiBase}/products/list`, {
+      method: 'POST',
+      body: {}
+    });
     productsData.value = response.result || []
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -130,10 +164,3 @@ onMounted(() => {
   fetchDataProducts()
 })
 </script>
-
-<style scoped>
-.custom-scrollbar::-webkit-scrollbar { width: 5px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
-</style>

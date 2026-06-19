@@ -1,144 +1,141 @@
 <template>
-  <div class="h-full flex flex-col space-y-4 animate-fade-in">
-    <!-- Header Actions -->
-    <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
-      <div class="flex items-center gap-3">
-        <div class="p-2 rounded-lg bg-primary-50 dark:bg-primary-900/20 text-primary-600">
-           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-           </svg>
-        </div>
-        <div>
-          <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">Guest Data</h2>
-          <p class="text-xs text-slate-500">Manage customer leads and inquiries</p>
-        </div>
-      </div>
+  <div class="h-full flex flex-col">
 
-      <button @click="refreshData" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95">
-        <svg xmlns="http://www.w3.org/2000/svg" :class="['w-4 h-4', isLoading ? 'animate-spin' : '']" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-        <span>Refresh</span>
-      </button>
+    <!-- Sticky Header -->
+    <div class="px-8 py-6 border-b border-zinc-200 dark:border-zinc-800
+                flex items-center justify-between shrink-0
+                bg-white dark:bg-slate-900 sticky top-0 z-10">
+      <div>
+        <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Guest Data</h1>
+        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Manage customer leads and inquiries</p>
+      </div>
     </div>
 
-    <!-- Table Container -->
-    <div class="flex-1 min-h-0 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
-      <div class="overflow-x-auto flex-1 custom-scrollbar">
+    <!-- Toolbar -->
+    <div class="px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4
+                bg-zinc-50/50 dark:bg-slate-900/50 shrink-0
+                border-b border-zinc-200 dark:border-zinc-800">
+      <div class="relative max-w-md w-full">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="bi bi-search text-zinc-400"></i>
+        </div>
+        <input v-model="searchQuery" type="text"
+          class="w-full pl-10 pr-4 py-2.5
+                 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700
+                 rounded-lg text-sm focus:ring-2 focus:ring-black dark:focus:ring-white
+                 outline-none transition-all dark:text-white placeholder-zinc-400 shadow-sm"
+          placeholder="Search by name or email..." />
+      </div>
+      <div class="flex items-center gap-3">
+        <button @click="refreshData"
+          class="w-9 h-9 flex items-center justify-center
+                 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700
+                 rounded-lg text-zinc-500 hover:text-black dark:hover:text-white transition-colors">
+          <i :class="['bi bi-arrow-clockwise', isLoading ? 'animate-spin' : '']"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="flex-1 overflow-auto px-8 py-4">
+
+      <!-- Loading State -->
+      <div v-if="isLoading" class="flex flex-col items-center justify-center h-64 text-zinc-400">
+        <div class="w-8 h-8 border-2 border-zinc-300 border-t-zinc-600 rounded-full animate-spin mb-4"></div>
+        <p>Loading guest data...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="!filteredGuests.length"
+        class="flex flex-col items-center justify-center h-64 text-zinc-400
+               border-2 border-dashed border-zinc-200 dark:border-zinc-800
+               rounded-xl bg-zinc-50/50 dark:bg-zinc-800/30">
+        <div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-4">
+          <i class="bi bi-inbox text-2xl"></i>
+        </div>
+        <h3 class="text-zinc-900 dark:text-white font-medium mb-1">No guest data found</h3>
+        <p class="text-sm">Customer leads will appear here once submitted.</p>
+      </div>
+
+      <!-- Table -->
+      <div v-else class="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm overflow-hidden">
         <table class="w-full text-left border-collapse">
-          <thead class="sticky top-0 z-10 bg-slate-50 dark:bg-slate-800/50 backdrop-blur-md">
-            <tr>
-              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">First Name</th>
-              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Last Name</th>
-              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Email</th>
-              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Phone</th>
-              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Note</th>
-              <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-slate-800">Created At</th>
+          <thead>
+            <tr class="bg-zinc-50/50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-700">
+              <th class="px-6 py-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">First Name</th>
+              <th class="px-6 py-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Last Name</th>
+              <th class="px-6 py-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Email</th>
+              <th class="px-6 py-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Phone</th>
+              <th class="px-6 py-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Note</th>
+              <th class="px-6 py-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Created At</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-            <tr v-for="item in guestData" :key="item._id" class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-              <td class="px-6 py-4 text-sm font-medium text-slate-700 dark:text-slate-300">{{ item.firstName }}</td>
-              <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{{ item.lastName }}</td>
-              <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                <a :href="'mailto:' + item.email" class="hover:text-primary-500 transition-colors">{{ item.email }}</a>
+          <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700">
+            <tr v-for="item in filteredGuests" :key="item._id"
+              class="group hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
+              <td class="px-6 py-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">{{ item.firstName }}</td>
+              <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">{{ item.lastName }}</td>
+              <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">
+                <a :href="'mailto:' + item.email" class="hover:text-blue-600 transition-colors">{{ item.email }}</a>
               </td>
-              <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{{ item.phoneNumber }}</td>
-              <td class="px-6 py-4 text-sm text-slate-500 italic max-w-xs truncate">{{ item.note || '-' }}</td>
-              <td class="px-6 py-4 text-xs text-slate-400 font-mono">{{ formatDate(item.createdAt) }}</td>
+              <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">{{ item.phoneNumber }}</td>
+              <td class="px-6 py-4 text-sm text-zinc-500 italic max-w-xs truncate">{{ item.note || '—' }}</td>
+              <td class="px-6 py-4 text-xs text-zinc-400 font-mono">{{ formatDate(item.createdAt) }}</td>
             </tr>
           </tbody>
         </table>
-
-        <!-- Empty State -->
-        <div v-if="!isLoading && (!guestData || guestData.length === 0)" class="flex flex-col items-center justify-center py-20 text-center">
-           <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-           </div>
-           <p class="text-slate-500 font-medium">No guest data found.</p>
-        </div>
       </div>
 
       <!-- Pagination -->
-      <div v-if="totalPages > 0" class="px-6 py-4 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-        <div class="text-xs text-slate-500 font-medium tracking-tight">
-          Showing <span class="text-slate-900 dark:text-slate-200">{{ (currentPage - 1) * pageSize + 1 }}-{{ Math.min(currentPage * pageSize, totalRecords) }}</span> of <span class="text-slate-900 dark:text-slate-200">{{ totalRecords }}</span> entries
-        </div>
-        
-        <div class="flex items-center gap-1">
-          <button @click="prevPage" :disabled="currentPage === 1" class="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+      <div v-if="totalPages > 1" class="mt-6 flex items-center justify-between border-t border-zinc-200 dark:border-zinc-700 pt-4">
+        <p class="text-sm text-zinc-500">
+          Showing <span class="font-medium text-zinc-900 dark:text-white">{{ (currentPage - 1) * pageSize + 1 }}</span> to
+          <span class="font-medium text-zinc-900 dark:text-white">{{ Math.min(currentPage * pageSize, totalRecords) }}</span> of
+          <span class="font-medium text-zinc-900 dark:text-white">{{ totalRecords }}</span>
+        </p>
+        <div class="flex gap-2">
+          <button @click="prevPage" :disabled="currentPage === 1"
+            class="px-3 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 text-sm font-medium
+                   hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+            Previous
           </button>
-          
-          <div class="flex items-center gap-1 mx-2">
-            <button v-for="page in visiblePages" :key="page" @click="goToPage(page)" 
-              :class="['w-8 h-8 flex items-center justify-center text-xs font-bold rounded-lg transition-all', page === currentPage ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400']">
-              {{ page }}
-            </button>
-          </div>
-
-          <button @click="nextPage" :disabled="currentPage === totalPages" class="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-30 disabled:pointer-events-none transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+          <button @click="nextPage" :disabled="currentPage === totalPages"
+            class="px-3 py-1 rounded-lg border border-zinc-200 dark:border-zinc-700 text-sm font-medium
+                   hover:bg-zinc-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+            Next
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div v-if="isLoading" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/10 backdrop-blur-[1px]">
-       <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-800 flex items-center gap-3">
-          <div class="w-5 h-5 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-          <span class="text-sm font-bold">Refreshing data...</span>
-       </div>
-    </div>
-
-    <ToastMessage ref="toastRef" :typeToast="currentToastType" :message="toastMessage" :show="showToast" :width="`w-2/3 lg:w-fit`" class="z-40" />
   </div>
 </template>
 
 <script setup>
-const toastRef = ref(null);
-const showToast = ref(false);
-const currentToastType = ref("");
-const toastMessage = ref("");
+definePageMeta({ layout: 'default' })
+
+const config = useRuntimeConfig();
 
 const currentPage = ref(1)
 const pageSize = ref(12)
 const totalRecords = ref(0)
 const totalPages = computed(() => Math.ceil(totalRecords.value / pageSize.value))
-
-const visiblePages = computed(() => {
-  const range = 2
-  let start = Math.max(1, currentPage.value - range)
-  let end = Math.min(totalPages.value, currentPage.value + range)
-  return Array.from({ length: end - start + 1 }, (_, i) => start + i)
-})
-
-const goToPage = (page) => {
-  if (page < 1 || page > totalPages.value) return
-  currentPage.value = page
-  fetchDataNews()
-}
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-    fetchDataNews()
-  }
-}
-
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--
-    fetchDataNews()
-  }
-}
-
-const config = useRuntimeConfig();
 const guestData = ref([])
 const isLoading = ref(false)
+const searchQuery = ref('')
+
+const filteredGuests = computed(() => {
+  if (!searchQuery.value) return guestData.value
+  const q = searchQuery.value.toLowerCase()
+  return guestData.value.filter(g =>
+    g.firstName?.toLowerCase().includes(q) ||
+    g.lastName?.toLowerCase().includes(q) ||
+    g.email?.toLowerCase().includes(q)
+  )
+})
+
+const nextPage = () => { if (currentPage.value < totalPages.value) { currentPage.value++; fetchData() } }
+const prevPage = () => { if (currentPage.value > 1) { currentPage.value--; fetchData() } }
 
 const formatDate = (dateString) => {
   const date = new Date(dateString)
@@ -149,10 +146,10 @@ const formatDate = (dateString) => {
 
 const refreshData = () => {
   currentPage.value = 1
-  fetchDataNews()
+  fetchData()
 }
 
-const fetchDataNews = async () => {
+const fetchData = async () => {
   isLoading.value = true;
   try {
     const response = await $fetch(`${config.public.apiBase}/quoteprices/list`, {
@@ -164,11 +161,10 @@ const fetchDataNews = async () => {
         sorted: [{ name: 'createdAt', direction: 'descending' }]
       }
     });
-
     guestData.value = response.result || []
     totalRecords.value = response.count || 0
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('Error fetching guest data:', error);
     guestData.value = [];
   } finally {
     isLoading.value = false;
@@ -176,6 +172,6 @@ const fetchDataNews = async () => {
 }
 
 onMounted(() => {
-  fetchDataNews();
+  fetchData();
 })
 </script>

@@ -4,107 +4,83 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
 
+  // Enable Nuxt 4 Architecture natively
+  future: {
+    compatibilityVersion: 4
+  },
+
   devtools: { enabled: false },
+
+  extends: [
+     './layers/inventory-layer'
+  ],
 
   devServer: {
     port: 7878,
+    host: 'localhost'
   },
+
+  // Let Nuxt 4 handle component auto-discovery automatically
+  // No need for restricted path overrides, which were breaking sub-folder imports.
+  components: [
+     { path: '~/components', pathPrefix: true }
+  ],
+
   app: {
     head: {
-      htmlAttrs: {
-        'data-theme': 'light'
-      },
-      bodyAttrs: {
-        class: "h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100",
-      },
-      title: "Admin Gateway City",
+      htmlAttrs: { 'data-theme': 'light' },
+      bodyAttrs: { class: "h-full" },
+      title: "Gateway Co Chien Admin",
       link: [
         { rel: "icon", type: "image/x-icon", href: "/Logo.svg" },
         { rel: "apple-touch-icon", sizes: "180x180", href: "/Logo.svg" },
-        { rel: "icon", type: "image/png", sizes: "32x32", href: "/Logo.svg" },
-        { rel: "icon", type: "image/png", sizes: "16x16", href: "/Logo.svg" },
-        { rel: "manifest", href: "/site.webmanifest" },
+        { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" }
       ],
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
-        { "http-equiv": "X-UA-Compatible", content: "IE=edge" },
-        { name: "description", content: "Admin Gateway City" },
-        { name: "keywords", content: "Admin Gateway City, Gatewaycity, Homes" },
-        { name: "author", content: "Admin Gateway City" },
-        { name: "robots", content: "index, follow" },
-        { name: "theme-color", content: "#FFFFFF" },
-        { name: "mobile-web-app-capable", content: "yes" },
-        { name: "apple-mobile-web-app-status-bar-style", content: "default" },
-        { name: "apple-mobile-web-app-title", content: "Admin Gateway City" },
-        { property: "og:title", content: "Admin Gateway City" },
-        { property: "og:description", content: "Admin Gateway City" },
+        { name: "description", content: "Gateway Co Chien Admin" },
+        { name: "author", content: "Gateway Co Chien" },
+        { name: "robots", content: "noindex, nofollow" },
+        { name: "theme-color", content: "#1C351C" },
+        { name: "apple-mobile-web-app-title", content: "Gateway Co Chien Admin" },
+        { property: "og:title", content: "Gateway Co Chien Admin" },
+        { property: "og:description", content: "Gateway Co Chien Admin" },
+        { property: "og:site_name", content: "Gateway Co Chien" },
         { property: "og:type", content: "website" },
-        { property: "og:url", content: `https://gatewaycityhomes.com` },
-        {
-          property: "og:image",
-          content: ``,
-        },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:site", content: "@gatewaycityhomes" },
-        { name: "twitter:title", content: "Admin Gateway City" },
-        { name: "twitter:description", content: "Admin Gateway City" },
-        {
-          name: "twitter:image",
-          content: ``,
-        },
+        { property: "og:image", content: "/Logo.png" },
       ],
     },
+    pageTransition: { name: 'page', mode: 'out-in' }
   },
 
   vite: {
-    plugins: [
-      compression(),
-      tailwindcss(),
-    ],
+    plugins: [ compression(), tailwindcss() ],
   },
 
-  // TRỎ ĐÚNG ĐƯỜNG DẪN CSS
-  css: [
-    "./app/assets/css/main.css",
-  ],
+  css: [ "~/assets/css/main.css" ],
 
-  modules: [
-    "@pinia/nuxt",
-    "@nuxt/image",
-    "@nuxt/fonts"
-  ],
+  modules: [ "@pinia/nuxt", "@nuxt/image", "@nuxt/fonts" ],
 
+  // Updated stores directory for Nuxt 4 structure
   pinia: {
-    storesDirs: ['./stores/**'],   // Nuxt 4 khuyến khích dùng stores/ thay vì store/
+    storesDirs: ['./stores/**'],
   },
 
   nitro: {
     serveStatic: true,
-    // Example of setting cache headers for static files
-    prerender: {
-      routes: ["/"], // Pre-render the home route
-      failOnError: false     // không dừng build nếu có lỗi nhỏ
-    },
-    
-    routeRules: {
-      // Apply caching headers to all routes
-      "/**": {
-        headers: {
-          "Cache-Control": "public, max-age=2592000, immutable", // 30 days
-        },
-      },
-    },
+    prerender: { routes: ["/"], failOnError: false },
   },
 
   imports: {
     autoImport: true,
+    dirs: [ '~/composables/**' ]
   },
 
   runtimeConfig: {
     public: {
-      apiBase: process.env.BASE_API,
+      apiBase: process.env.BASE_API || 'http://localhost:4000',
+      googleClientId: process.env.GOOGLE_CLIENT_ID || 'dummy-client-id',
     },
   },
-
 });

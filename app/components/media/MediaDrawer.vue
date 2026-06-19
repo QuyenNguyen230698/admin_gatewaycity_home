@@ -162,8 +162,6 @@
           </div>
        </div>
     </Transition>
-
-    <ToastMessage ref="toastRef" :typeToast="currentToastType" :message="toastMessage" :show="showToast" :width="`w-2/3 lg:w-fit`" class="z-40" />
   </Teleport>
 </template>
 
@@ -178,6 +176,9 @@ const isDragging = ref(false);
 const imagesData = ref([]);
 const selectedFiles = ref([]);
 
+const showDeleteConfirm = ref(false)
+const idToDelete = ref(null)
+
 // Pagination
 const currentPage = ref(1);
 const pageSize = ref(12);
@@ -190,19 +191,6 @@ const visiblePages = computed(() => {
   let end = Math.min(totalPages.value, currentPage.value + range);
   return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 });
-
-// Toast
-const toastRef = ref(null);
-const showToast = ref(false);
-const currentToastType = ref("");
-const toastMessage = ref("");
-
-const showMessageToast = (type, message) => {
-  currentToastType.value = type;
-  toastMessage.value = message;
-  showToast.value = true;
-  if (toastRef.value) toastRef.value.show();
-};
 
 // Actions
 const closeDrawer = () => {
@@ -249,25 +237,32 @@ const refreshImages = () => { currentPage.value = 1; fetchDataImage(); };
 
 const copyImageUrl = (url) => {
     navigator.clipboard.writeText(url);
-    showMessageToast('success', 'URL copied to clipboard!');
+    toast.success('Đã sao chép liên kết vào bộ nhớ tạm!');
 };
 
 const viewImage = (url) => window.open(url, '_blank');
 
-const deleteSingleImage = async (id) => {
-    if (!confirm('Permanent delete?')) return;
+const deleteSingleImage = (id) => {
+    idToDelete.value = id
+    showDeleteConfirm.value = true
+};
+
+const handleConfirmDelete = async () => {
+    if (!idToDelete.value) return
+    showDeleteConfirm.value = false
     isLoading.value = true;
     try {
         await $fetch(`${config.public.apiBase}/cloudinary/delete`, {
             method: 'DELETE',
-            body: { public_id: id }
+            body: { public_id: idToDelete.value }
         });
         fetchDataImage();
-        showMessageToast('success', 'Deleted successfully');
+        toast.success('Xóa tệp tin thành công!');
     } catch (e) {
-        showMessageToast('error', 'Delete failed');
+        toast.error('Lỗi khi xóa tệp tin');
     } finally {
         isLoading.value = false;
+        idToDelete.value = null
     }
 };
 
@@ -285,9 +280,9 @@ const submitUpload = async () => {
         isUploadModalOpen.value = false;
         selectedFiles.value = [];
         fetchDataImage();
-        showMessageToast('success', 'Upload complete!');
+        toast.success('Tải lên thành công!');
     } catch (e) {
-        showMessageToast('error', 'Upload failed');
+        toast.error('Tải lên thất bại');
     } finally {
         isLoading.value = false;
     }

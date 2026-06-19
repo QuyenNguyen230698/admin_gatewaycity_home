@@ -175,9 +175,9 @@ const saveEdit = async () => {
       body: productStore.product
     });
     isEditMode.value = false;
-    alert('Changes saved successfully!');
+    toast.success('Đã lưu thay đổi thành công!');
   } catch (error) {
-    alert('Failed to save changes.');
+    toast.error('Lỗi khi lưu thay đổi sản phẩm.');
   } finally {
     isLoading.value = false;
   }

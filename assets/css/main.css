@@ -1,0 +1,161 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* ============================================
+     Google / Antigravity Light Design System
+     ============================================ */
+
+  /* Core Color Palette (Google Material 3 + Antigravity) */
+  --color-g-bg: #ffffff;             /* Pure white background */
+  --color-g-surface: #f8f9fa;        /* Subtle gray surface (sidebar, header) */
+  --color-g-surface-2: #f1f3f4;      /* Slightly deeper surface (inputs, cards) */
+  --color-g-border: #e0e3e8;         /* Ultra-thin border */
+  --color-g-border-dark: #dadce0;    /* Slightly stronger border */
+
+  /* Typography */
+  --color-g-text-primary: #1f2937;   /* Near-black for main text */
+  --color-g-text-secondary: #4b5563; /* Medium gray for secondary text */
+  --color-g-text-muted: #9ca3af;     /* Light gray for placeholder/muted */
+
+  /* Brand / Accent */
+  --color-g-blue: #1a73e8;           /* Google Blue */
+  --color-g-blue-light: #e8f0fe;     /* Blue tint bg */
+  --color-g-purple: #7c3aed;         /* Antigravity accent */
+  --color-g-purple-light: #ede9fe;   /* Purple tint bg */
+
+  /* Antigravity Gemini Gradient */
+  --gradient-ag: linear-gradient(135deg, #1a73e8 0%, #7c3aed 50%, #db4437 100%);
+  --gradient-ag-hover: linear-gradient(135deg, #1558d6 0%, #6d28d9 50%, #c53929 100%);
+  --gradient-ag-subtle: linear-gradient(135deg, rgba(26,115,232,0.08) 0%, rgba(124,58,237,0.08) 100%);
+
+  /* Layout */
+  --sidebar-width: 256px;
+  --header-height: 60px;
+
+  /* Shapes */
+  --radius-g: 0.5rem;       /* 8px - Google standard */
+  --radius-g-lg: 0.75rem;   /* 12px - cards */
+  --radius-g-xl: 1rem;      /* 16px - modals */
+  --radius-full: 9999px;
+
+  /* Shadows (Google elevation) */
+  --shadow-g-1: 0 1px 3px 0 rgba(60,64,67,0.08), 0 1px 2px -1px rgba(60,64,67,0.08);
+  --shadow-g-2: 0 4px 6px -1px rgba(60,64,67,0.1), 0 2px 4px -2px rgba(60,64,67,0.06);
+  --shadow-g-3: 0 10px 15px -3px rgba(60,64,67,0.1), 0 4px 6px -4px rgba(60,64,67,0.05);
+  --shadow-g-blue: 0 0 0 3px rgba(26,115,232,0.15);
+
+  /* Typography */
+  --font-pro: "Inter", "Google Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", monospace;
+
+  /* Animations */
+  --animate-fade-in: fade-in 0.25s cubic-bezier(.4, 0, .2, 1);
+  --animate-slide-up: slide-up 0.3s cubic-bezier(.4, 0, .2, 1);
+}
+
+@layer base {
+  html, body {
+    @apply h-full overflow-hidden antialiased;
+    background-color: #f8f9fa;
+    color: #1f2937;
+    font-family: "Inter", "Google Sans", system-ui, sans-serif;
+  }
+
+  *, *::before, *::after {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ==============================
+   Scrollbar  (Google minimal)
+   ============================== */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #dadce0;
+  border-radius: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #bdc1c6;
+}
+
+/* ==============================
+   Utility Classes
+   ============================== */
+.g-card {
+  background: #ffffff;
+  border: 1px solid var(--color-g-border);
+  border-radius: var(--radius-g-lg);
+  box-shadow: var(--shadow-g-1);
+  transition: box-shadow 0.2s ease;
+}
+.g-card:hover {
+  box-shadow: var(--shadow-g-2);
+}
+
+.g-surface {
+  background: var(--color-g-surface);
+  border: 1px solid var(--color-g-border);
+}
+
+.ag-gradient-text {
+  background: var(--gradient-ag);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ag-gradient-btn {
+  background: var(--gradient-ag);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.ag-gradient-btn:hover {
+  background: var(--gradient-ag-hover);
+  box-shadow: 0 8px 25px -5px rgba(26, 115, 232, 0.4);
+}
+
+/* ==============================
+   Page Transitions
+   ============================== */
+.page-enter-active, .page-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+/* ==============================
+   Keyframes
+   ============================== */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}

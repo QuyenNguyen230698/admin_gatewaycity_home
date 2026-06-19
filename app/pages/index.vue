@@ -1,85 +1,87 @@
 <template>
-  <div class="space-y-8 pb-12">
-    <!-- Welcome Section -->
-    <section class="relative overflow-hidden rounded-3xl bg-slate-900 p-8 sm:p-12 text-white shadow-2xl">
-      <div class="relative z-10 max-w-2xl animate-fade-in">
-        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
-          Welcome to <span class="text-primary-400">Gateway City</span> Dashboard
-        </h1>
-        <p class="text-lg text-slate-300 mb-8 leading-relaxed">
-          Manage your real estate listings, news updates, and customer inquiries all in one powerful, modern platform.
-        </p>
-        <div class="flex flex-wrap gap-4">
-          <NuxtLink to="/products" class="px-6 py-3 rounded-xl bg-primary-500 hover:bg-primary-600 font-bold transition-all shadow-lg shadow-primary-500/20 active:scale-95">
-            Manage Products
-          </NuxtLink>
-          <NuxtLink to="/news" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 font-bold transition-all border border-slate-700 active:scale-95">
-            Post News
-          </NuxtLink>
-        </div>
-      </div>
-      
-      <!-- Abstract Background Element -->
-      <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary-600/20 rounded-full blur-[120px]"></div>
-      <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-blue-600/20 rounded-full blur-[100px]"></div>
-    </section>
+  <div class="min-h-full p-8 bg-slate-50 dark:bg-slate-900">
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div v-for="(stat, idx) in stats" :key="idx" 
-        class="card-premium p-6 group animate-slide-up" :style="{ animationDelay: `${idx * 100}ms` }">
-        <div class="flex items-center justify-between mb-4">
-          <div :class="['p-3 rounded-xl', stat.color]">
-            <div v-html="stat.icon" class="w-6 h-6"></div>
-          </div>
-          <span class="text-xs font-bold text-green-500 flex items-center bg-green-500/10 px-2 py-1 rounded-full">
-            +{{ stat.trend }}%
-          </span>
-        </div>
-        <h3 class="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider mb-1">
-          {{ stat.label }}
-        </h3>
-        <p class="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-          {{ stat.value }}
+    <!-- Header Section -->
+    <div class="mb-10 flex items-end justify-between">
+      <div>
+        <h1 class="text-4xl font-extrabold bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 bg-clip-text text-transparent tracking-tight">
+          Gateway Co Chien Admin
+        </h1>
+        <p class="text-lg text-slate-500 mt-1">
+          Chào mừng trở lại, <span class="font-semibold text-slate-700 dark:text-slate-300">Gateway Co Chien</span> 👋
         </p>
-        <div class="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mt-4">
-          <div class="h-full bg-primary-500 transition-all duration-1000 group-hover:scale-x-110 origin-left" 
-            :style="{ width: stat.progress + '%' }"></div>
-        </div>
+      </div>
+      <div class="text-slate-400 text-sm font-medium hidden sm:block">
+        {{ currentDate }}
       </div>
     </div>
 
-    <!-- Secondary Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <div class="card-premium p-8 h-80 flex flex-col justify-between animate-fade-in" style="animation-delay: 400ms">
-        <div>
-          <h3 class="text-xl font-bold mb-2">Latest Registered Guests</h3>
-          <p class="text-slate-500 text-sm mb-6">Overview of last 3 registration activities</p>
-          <div class="space-y-4">
-             <div v-for="i in 3" :key="i" class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800"></div>
-                <div class="flex-1 space-y-1">
-                   <div class="h-4 bg-slate-100 dark:bg-slate-800 rounded-md w-3/4"></div>
-                   <div class="h-3 bg-slate-50 dark:bg-slate-800/50 rounded-md w-1/2"></div>
-                </div>
-             </div>
+    <!-- Stats Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+      <div v-for="(stat, idx) in stats" :key="idx"
+        class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm"
+            :class="stat.bg">
+            <i :class="[stat.icon, 'text-lg']"></i>
+          </div>
+          <span class="text-xs font-bold text-green-600 bg-green-50 border border-green-100 px-2 py-0.5 rounded-full">
+            ▲ {{ stat.trend }}%
+          </span>
+        </div>
+        <div class="text-2xl font-bold text-zinc-900 dark:text-white">{{ stat.value }}</div>
+        <div class="text-xs text-zinc-500 uppercase tracking-wider mt-1">{{ stat.label }}</div>
+      </div>
+    </div>
+
+    <!-- App Cards Grid -->
+    <div class="mb-6">
+      <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-1">Modules</h2>
+      <p class="text-sm text-slate-500 mb-6">Truy cập nhanh các ứng dụng quản trị</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <NuxtLink
+        v-for="app in appModules" :key="app.path"
+        :to="app.path"
+        class="group relative bg-white dark:bg-slate-800 rounded-3xl p-6
+               border border-slate-200 dark:border-slate-700
+               hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
+        :class="`hover:border-${app.color}-500/50`"
+      >
+        <!-- BG Decoration blob -->
+        <div
+          class="absolute top-0 right-0 w-32 h-32 rounded-bl-[100px] -mr-8 -mt-8 transition-transform duration-500 group-hover:scale-150"
+          :class="`bg-gradient-to-br from-${app.color}-500/10 to-${app.color2}-500/10`"
+        ></div>
+
+        <div class="relative z-10">
+          <!-- Icon + Status Badge -->
+          <div class="flex items-start justify-between mb-6">
+            <div
+              class="w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg
+                     group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+              :class="`bg-gradient-to-br from-${app.color}-600 to-${app.color2}-600`"
+            >
+              <i :class="[app.icon, 'text-3xl']"></i>
+            </div>
+            <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase tracking-wide border border-green-200">
+              Online
+            </span>
+          </div>
+
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 transition-colors"
+              :class="`group-hover:text-${app.color}-600`">
+            {{ app.label }}
+          </h3>
+          <p class="text-sm text-slate-500 mb-6 line-clamp-2 h-10 leading-relaxed">{{ app.description }}</p>
+
+          <div class="flex items-center text-sm font-bold" :class="`text-${app.color}-600`">
+            Access App
+            <i class="bi bi-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
           </div>
         </div>
-        <NuxtLink to="/guest-data" class="text-primary-500 font-bold text-sm hover:underline mt-4 inline-block">View all data →</NuxtLink>
-      </div>
-
-      <div class="card-premium p-8 h-80 flex flex-col justify-center items-center text-center animate-fade-in" style="animation-delay: 500ms">
-        <div class="w-20 h-20 rounded-2xl bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center text-primary-500 mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-        </div>
-        <h3 class="text-xl font-bold mb-2">Create New Content</h3>
-        <p class="text-slate-500 dark:text-slate-400 text-sm mb-6 max-w-xs">Start building your community by sharing new project updates or news articles.</p>
-        <NuxtLink to="/contents" class="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold transition-all hover:ring-4 hover:ring-slate-900/10 dark:hover:ring-white/10">
-          Open Editor
-        </NuxtLink>
-      </div>
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -89,38 +91,83 @@ definePageMeta({
   layout: 'default',
 })
 
+const currentDate = computed(() => {
+  return new Date().toLocaleDateString('vi-VN', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  })
+})
+
 const stats = [
-  { 
-    label: 'Total Products', 
-    value: '24', 
-    trend: '12', 
-    progress: 65, 
-    color: 'bg-blue-500/10 text-blue-600',
-    icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>'
+  { label: 'Inventory Items', value: '2.4K', trend: '12.4', icon: 'bi bi-archive', bg: 'bg-blue-600' },
+  { label: 'Products', value: '156', trend: '24.1', icon: 'bi bi-box-seam', bg: 'bg-orange-600' },
+  { label: 'News Articles', value: '42', trend: '5.2', icon: 'bi bi-newspaper', bg: 'bg-purple-600' },
+  { label: 'Guest Leads', value: '8.4K', trend: '31.2', icon: 'bi bi-people', bg: 'bg-emerald-600' },
+]
+
+const appModules = [
+  {
+    path: '/products',
+    label: 'Products',
+    description: 'Manage property listings and building blueprints.',
+    icon: 'bi bi-box-seam',
+    color: 'orange',
+    color2: 'red',
   },
-  { 
-    label: 'Guest Leads', 
-    value: '156', 
-    trend: '24', 
-    progress: 82, 
-    color: 'bg-purple-500/10 text-purple-600',
-    icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>'
+  {
+    path: '/inventory',
+    label: 'Inventory',
+    description: 'Track and manage inventory stock across all warehouses.',
+    icon: 'bi bi-archive',
+    color: 'blue',
+    color2: 'indigo',
   },
-  { 
-    label: 'News Articles', 
-    value: '42', 
-    trend: '5', 
-    progress: 45, 
-    color: 'bg-orange-500/10 text-orange-600',
-    icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>'
+  {
+    path: '/product-3d',
+    label: '3D Viewer',
+    description: 'Explore 3D models and virtual property tours.',
+    icon: 'bi bi-box',
+    color: 'indigo',
+    color2: 'purple',
   },
-  { 
-    label: 'Active Users', 
-    value: '8.4k', 
-    trend: '31', 
-    progress: 90, 
-    color: 'bg-green-500/10 text-green-600',
-    icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>'
-  }
+  {
+    path: '/contents',
+    label: 'Contents',
+    description: 'Design and publish landing pages and email campaigns.',
+    icon: 'bi bi-file-earmark-richtext',
+    color: 'rose',
+    color2: 'pink',
+  },
+  {
+    path: '/news',
+    label: 'News & Media',
+    description: 'Create and manage articles, events and announcements.',
+    icon: 'bi bi-newspaper',
+    color: 'purple',
+    color2: 'pink',
+  },
+  {
+    path: '/guest-data',
+    label: 'Guests',
+    description: 'Manage customer leads, inquiries and contact data.',
+    icon: 'bi bi-people',
+    color: 'emerald',
+    color2: 'teal',
+  },
+  {
+    path: '/permissions',
+    label: 'Permissions',
+    description: 'Control user access, roles and app permissions.',
+    icon: 'bi bi-shield-check',
+    color: 'indigo',
+    color2: 'purple',
+  },
+  {
+    path: '/audit-logs',
+    label: 'Audit Logs',
+    description: 'Monitor system activity and security events.',
+    icon: 'bi bi-clock-history',
+    color: 'slate',
+    color2: 'zinc',
+  },
 ]
 </script>
