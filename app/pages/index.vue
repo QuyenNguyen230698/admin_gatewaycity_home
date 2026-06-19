@@ -98,10 +98,10 @@ const currentDate = computed(() => {
 })
 
 const stats = [
-  { label: 'Inventory Items', value: '2.4K', trend: '12.4', icon: 'bi bi-archive', bg: 'bg-blue-600' },
-  { label: 'Products', value: '156', trend: '24.1', icon: 'bi bi-box-seam', bg: 'bg-orange-600' },
-  { label: 'News Articles', value: '42', trend: '5.2', icon: 'bi bi-newspaper', bg: 'bg-purple-600' },
-  { label: 'Guest Leads', value: '8.4K', trend: '31.2', icon: 'bi bi-people', bg: 'bg-emerald-600' },
+  { label: 'Products', value: '—', trend: '0', icon: 'bi bi-box-seam', bg: 'bg-orange-600' },
+  { label: 'Contents', value: '—', trend: '0', icon: 'bi bi-file-earmark-richtext', bg: 'bg-rose-600' },
+  { label: 'News Articles', value: '—', trend: '0', icon: 'bi bi-newspaper', bg: 'bg-purple-600' },
+  { label: 'Permissions', value: '—', trend: '0', icon: 'bi bi-shield-check', bg: 'bg-indigo-600' },
 ]
 
 const appModules = [
@@ -112,22 +112,6 @@ const appModules = [
     icon: 'bi bi-box-seam',
     color: 'orange',
     color2: 'red',
-  },
-  {
-    path: '/inventory',
-    label: 'Inventory',
-    description: 'Track and manage inventory stock across all warehouses.',
-    icon: 'bi bi-archive',
-    color: 'blue',
-    color2: 'indigo',
-  },
-  {
-    path: '/product-3d',
-    label: '3D Viewer',
-    description: 'Explore 3D models and virtual property tours.',
-    icon: 'bi bi-box',
-    color: 'indigo',
-    color2: 'purple',
   },
   {
     path: '/contents',
@@ -146,28 +130,12 @@ const appModules = [
     color2: 'pink',
   },
   {
-    path: '/guest-data',
-    label: 'Guests',
-    description: 'Manage customer leads, inquiries and contact data.',
-    icon: 'bi bi-people',
-    color: 'emerald',
-    color2: 'teal',
-  },
-  {
     path: '/permissions',
     label: 'Permissions',
     description: 'Control user access, roles and app permissions.',
     icon: 'bi bi-shield-check',
     color: 'indigo',
     color2: 'purple',
-  },
-  {
-    path: '/audit-logs',
-    label: 'Audit Logs',
-    description: 'Monitor system activity and security events.',
-    icon: 'bi bi-clock-history',
-    color: 'slate',
-    color2: 'zinc',
   },
 ]
 </script>

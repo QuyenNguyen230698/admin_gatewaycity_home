@@ -144,8 +144,7 @@ const fetchDataProducts = async () => {
   isLoading.value = true;
   try {
     const response = await $fetch(`${config.public.apiBase}/products/list`, {
-      method: 'POST',
-      body: {}
+      method: 'GET'
     });
     productsData.value = response.result || []
   } catch (error) {

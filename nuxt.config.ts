@@ -11,10 +11,6 @@ export default defineNuxtConfig({
 
   devtools: { enabled: false },
 
-  extends: [
-     './layers/inventory-layer'
-  ],
-
   devServer: {
     port: 7878,
     host: 'localhost'
@@ -80,7 +76,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: process.env.BASE_API || 'http://localhost:4000',
-      googleClientId: process.env.GOOGLE_CLIENT_ID || 'dummy-client-id',
     },
   },
 });

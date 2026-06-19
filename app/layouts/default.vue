@@ -206,13 +206,9 @@ const user = ref({
 const navItems = [
   { path: "/", label: "Dashboard", icon: "bi bi-grid-fill" },
   { path: "/products", label: "Products", icon: "bi bi-box-seam" },
-  { path: "/inventory", label: "Inventory", icon: "bi bi-archive" },
-  { path: "/product-3d", label: "3D Viewer", icon: "bi bi-box" },
   { path: "/contents", label: "Contents", icon: "bi bi-file-earmark-richtext" },
   { path: "/news", label: "News", icon: "bi bi-newspaper" },
-  { path: "/guest-data", label: "Guests", icon: "bi bi-people" },
   { path: "/permissions", label: "Permissions", icon: "bi bi-shield-check" },
-  { path: "/audit-logs", label: "Audit Logs", icon: "bi bi-clock-history" },
 ];
 
 const isActive = (item) => {

@@ -48,20 +48,6 @@
             <span v-else>Processing...</span>
           </button>
         </div>
-
-        <div class="relative flex items-center gap-4 py-2">
-          <div class="flex-1 h-[1px] bg-gray-200"></div>
-          <span class="text-[10px] font-medium text-gray-400 uppercase">Identity Provider</span>
-          <div class="flex-1 h-[1px] bg-gray-200"></div>
-        </div>
-
-        <div class="flex justify-center">
-          <LoginGoogleSignIn 
-            :clientId="config.public.googleClientId" 
-            @success="handleGoogleSuccess"
-            @error="err => loginError = err"
-          />
-        </div>
       </form>
 
       <footer class="mt-10 text-center text-[11px] text-gray-400 flex flex-col items-center gap-1">
@@ -116,27 +102,6 @@ const handleLogin = async () => {
     router.push('/callback')
   } catch (err) {
     loginError.value = 'Cipher Mismatch. Access Denied.'
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleGoogleSuccess = async (idToken) => {
-  loginError.value = ''
-  loading.value = true
-  try {
-    const response = await $fetch(`${config.public.apiBase}/auth/google/login`, {
-      method: 'POST',
-      body: JSON.stringify({ idToken }),
-    })
-    if (response.result) {
-      saveSession(response.token, response.data)
-      router.push('/callback')
-    } else {
-      loginError.value = response.message || 'Bridge Failed.'
-    }
-  } catch (err) {
-    loginError.value = 'Infrastructure Link Timeout.'
   } finally {
     loading.value = false
   }

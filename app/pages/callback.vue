@@ -53,7 +53,7 @@ const subStatus = ref('Verifying identity')
 
 const logItems = ref([
   'Initialising Security Kernel...',
-  'Connecting to Google Gateway...',
+  'Connecting to Secure Gateway...',
   'Retrieving Session Tokens...',
   'Validating Admin Credentials...',
   'Handshaking with API...',
